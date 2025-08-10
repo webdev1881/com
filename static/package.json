@@ -1,0 +1,40 @@
+{
+  "name": "com-odoo",
+  "version": "1.0.0",
+  "description": "Vue.js 3 интеграция для Odoo 18 с Dashboard аналитикой",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build-watch": "vite build --watch",
+    "serve": "vite preview --host",
+    "lint": "eslint src --ext .vue,.js,.ts",
+    "format": "prettier --write src/**/*.{vue,js,ts}"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.3.0",
+    "axios": "^1.5.0",
+    "terser": "^5.43.1",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "@vitejs/plugin-vue": "^4.3.4",
+    "eslint": "^8.47.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "prettier": "^3.0.2",
+    "sass": "^1.66.1",
+    "vite": "^4.4.9"
+  },
+  "keywords": [
+    "vue",
+    "odoo",
+    "erp",
+    "javascript",
+    "frontend"
+  ],
+  "author": "SMK Group",
+  "license": "LGPL-3.0"
+}

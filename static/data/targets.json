@@ -1,0 +1,103 @@
+{
+  "targetTree": {
+    "turnover": {
+      "name": "Оборот",
+      "maxScore": 100,
+      "type": "positive"
+    },
+    "losses": {
+      "name": "Списання ТМЦ",
+      "maxScore": 20,
+      "type": "negative"
+    },
+    "shortages": {
+      "name": "Нестачі",
+      "maxScore": 100,
+      "type": "negative"
+    },
+    "fop": {
+      "name": "ФОП",
+      "maxScore": 15,
+      "type": "negative"
+    },
+    "unprocessed": {
+      "name": "Непровед. списання",
+      "maxScore": 10,
+      "type": "negative"
+    }
+  },
+  "storeTargets": {
+    "1": {
+      "losses": 0.0007,
+      "shortages": 0.00018,
+      "fop": 0.012,
+      "unprocessed": 0.0000008
+    },
+    "2": {
+      "losses": 0.0007,
+      "shortages": 0.00020,
+      "fop": 0.015,
+      "unprocessed": 0.0000009
+    },
+    "3": {
+      "losses": 0.0007,
+      "shortages": 0.00022,
+      "fop": 0.013,
+      "unprocessed": 0.0000010
+    },
+    "4": {
+      "losses": 0.0007,
+      "shortages": 0.00019,
+      "fop": 0.014,
+      "unprocessed": 0.0000009
+    },
+    "5": {
+      "losses": 0.0007,
+      "shortages": 0.00024,
+      "fop": 0.016,
+      "unprocessed": 0.0000011
+    },
+    "6": {
+      "losses": 0.0007,
+      "shortages": 0.00017,
+      "fop": 0.011,
+      "unprocessed": 0.0000007
+    },
+    "7": {
+      "losses": 0.0007,
+      "shortages": 0.00016,
+      "fop": 0.010,
+      "unprocessed": 0.0000007
+    },
+    "8": {
+      "losses": 0.0007,
+      "shortages": 0.00021,
+      "fop": 0.014,
+      "unprocessed": 0.0000009
+    },
+    "9": {
+      "losses": 0.0007,
+      "shortages": 0.00017,
+      "fop": 0.011,
+      "unprocessed": 0.0000008
+    },
+    "10": {
+      "losses": 0.0007,
+      "shortages": 0.00023,
+      "fop": 0.015,
+      "unprocessed": 0.0000010
+    },
+    "11": {
+      "losses": 0.0007,
+      "shortages": 0.00018,
+      "fop": 0.012,
+      "unprocessed": 0.0000008
+    },
+    "12": {
+      "losses": 0.0007,
+      "shortages": 0.00020,
+      "fop": 0.013,
+      "unprocessed": 0.0000009
+    }
+  }
+}

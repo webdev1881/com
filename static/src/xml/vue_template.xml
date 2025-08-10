@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Шаблон для Vue Dashboard -->
+    <t t-name="com.VueDashboardTemplate" owl="1">
+        <div class="vue-integration-container" t-ref="root">
+
+            <div id="vue-mount-point" class="vue-mount-point">
+                <div class="vue-loading">
+                    <div class="d-flex align-items-center justify-content-center" style="min-height: 300px;">
+                        <div class="text-center">
+                            <i class="fa fa-spinner fa-spin fa-2x text-primary mb-3"></i>
+                            <div>
+                                <strong>Загрузка...</strong>
+                            </div>
+                            <small class="text-muted">Пожалуйста, подождите</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+    <!-- Шаблон для Vue Components -->
+    <t t-name="com.VuePlansTemplate" owl="1">
+        <div class="vue-integration-container" t-ref="root">
+            <!-- <div class="vue-header">
+                <h2><i class="fa fa-puzzle-piece"></i> Vue.js Components</h2>
+                Планы
+            </div> -->
+            <div id="vue-mount-point" class="vue-mount-point">
+                <div class="vue-loading">
+                    <div class="d-flex align-items-center justify-content-center" style="min-height: 300px;">
+                        <div class="text-center">
+                            <i class="fa fa-spinner fa-spin fa-2x text-primary mb-3"></i>
+                            <div>
+                                <strong>Загрузка Vue приложения...</strong>
+                            </div>
+                            <small class="text-muted">Пожалуйста, подождите</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

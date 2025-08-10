@@ -1,0 +1,291 @@
+# ======================================
+# .gitignore для Odoo аддона с Vue.js
+# ======================================
+
+# ==========================================
+# Python / Odoo специфичные файлы
+# ==========================================
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Node.js / Vue.js специфичные файлы
+# ==========================================
+
+# Dependencies
+static/node_modules/
+static/npm-debug.log*
+static/yarn-debug.log*
+static/yarn-error.log*
+static/package-lock.json
+static/yarn.lock
+
+# Production build (раскомментируйте если не нужно коммитить сборку)
+# static/dist/
+
+# Runtime data
+static/pids
+static/*.pid
+static/*.seed
+static/*.pid.lock
+
+# Coverage directory used by tools like istanbul
+static/coverage/
+
+# nyc test coverage
+static/.nyc_output
+
+# Grunt intermediate storage
+static/.grunt
+
+# Bower dependency directory
+static/bower_components
+
+# node-waf configuration
+static/.lock-wscript
+
+# Compiled binary addons
+static/build/Release
+
+# Dependency directories
+static/jspm_packages/
+
+# Optional npm cache directory
+static/.npm
+
+# Optional eslint cache
+static/.eslintcache
+
+# Optional REPL history
+static/.node_repl_history
+
+# Output of 'npm pack'
+static/*.tgz
+
+# Yarn Integrity file
+static/.yarn-integrity
+
+# parcel-bundler cache
+static/.cache
+static/.parcel-cache
+
+# next.js build output
+static/.next
+
+# nuxt.js build output
+static/.nuxt
+
+# vuepress build output
+static/.vuepress/dist
+
+# Serverless directories
+static/.serverless
+
+# ==========================================
+# IDE / Редакторы
+# ==========================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Eclipse
+.project
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# ==========================================
+# Операционные системы
+# ==========================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==========================================
+# Логи и временные файлы
+# ==========================================
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ==========================================
+# Backup файлы
+# ==========================================
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*.orig
+*~
+
+# ==========================================
+# Database файлы (если есть локальные)
+# ==========================================
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# Конфигурационные файлы (чувствительные)
+# ==========================================
+
+# Local configuration files (раскомментируйте если нужно)
+# config/local.conf
+# .env.local
+# .env.production
+
+# ==========================================
+# Специфичные для проекта файлы
+# ==========================================
+
+# Временные файлы данных
+static/data/*.tmp
+static/data/temp_*
+
+# Пользовательские uploads (если есть)
+uploads/
+temp_uploads/
+
+# Кэш файлы
+.cache/
+static/.cache/
+
+# Lock файлы
+*.lock

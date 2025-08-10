@@ -1,0 +1,39 @@
+# Этот файл для добавления в корневой .gitignore проекта Odoo
+# если у вас несколько аддонов в папке custom_addons/
+
+# ==========================================
+# Общие исключения для всех аддонов
+# ==========================================
+
+# Python cache во всех аддонах
+custom_addons/**/__pycache__/
+custom_addons/**/*.pyc
+custom_addons/**/*.pyo
+
+# Node.js зависимости во всех аддонах
+custom_addons/**/node_modules/
+custom_addons/**/package-lock.json
+
+# Логи всех аддонов
+custom_addons/**/*.log
+custom_addons/**/logs/
+
+# IDE файлы
+.vscode/
+.idea/
+*.sublime-*
+
+# OS файлы
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Специфичные исключения для аддона com
+# ==========================================
+
+# Если нужно исключить билд аддона com
+# custom_addons/com/static/dist/
+
+# Временные файлы аддона com
+custom_addons/com/static/data/*.tmp
+custom_addons/com/temp/

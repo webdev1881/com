@@ -1,0 +1,32 @@
+/* МЯГКАЯ ЗАЩИТА ОТ СТИЛЕЙ ODOO */
+.vue-isolated {
+  /* Защищаем только критические свойства */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+/* Защищаем кнопки Bootstrap от Odoo */
+.vue-isolated .btn {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+/* Защищаем формы от Odoo */
+.vue-isolated input, 
+.vue-isolated select, 
+.vue-isolated textarea {
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Защищаем заголовки от Odoo */
+.vue-isolated h1, 
+.vue-isolated h2, 
+.vue-isolated h3, 
+.vue-isolated h4, 
+.vue-isolated h5, 
+.vue-isolated h6 {
+  font-family: inherit !important;
+}
