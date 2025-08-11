@@ -17,7 +17,7 @@
         <!-- Потом создаем меню -->
         <menuitem 
             id="menu_vue_main" 
-            name="SMK Analytics" 
+            name="Компасс" 
             sequence="100"
             web_icon="com,static/description/icon.png"/>
         

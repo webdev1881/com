@@ -1,26 +1,5 @@
 <template>
   <div id="vue-odoo-app" class="vue-app vue-isolated-app">
-    <!-- Простая навигация -->
-    <!-- <nav v-if="showNavigation" class="vue-nav">
-      <div class="nav-brand">
-        <h1>📊 SMK Analytics</h1>
-      </div>
-      
-      <div class="nav-menu">
-        <router-link 
-          v-for="route in navRoutes" 
-          :key="route.path"
-          :to="route.path" 
-          class="nav-item"
-          :class="{ 'nav-item--active': $route.path === route.path }"
-        >
-          <span class="nav-icon">{{ route.meta.icon }}</span>
-          <span class="nav-label">{{ route.meta.title }}</span>
-        </router-link>
-      </div>
-    </nav> -->
-
-    <!-- Основной контент -->
     <main class="vue-main">
       <router-view></router-view>
     </main>
@@ -32,9 +11,8 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const showNavigation = ref(true) // Можно управлять отображением навигации
+const showNavigation = ref(true) //  Можно управлять отображением навигации
 
-// Получаем маршруты для навигации
 const navRoutes = computed(() => {
   return router.getRoutes()
     .filter(route => route.meta?.title && route.path !== '/' && route.name !== 'Plans-Alt')
