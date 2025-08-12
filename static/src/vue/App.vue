@@ -11,7 +11,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const showNavigation = ref(true) //  Можно управлять отображением навигации
+const showNavigation = ref(true) //router тогл 
 
 const navRoutes = computed(() => {
   return router.getRoutes()

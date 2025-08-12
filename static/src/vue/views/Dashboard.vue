@@ -28,13 +28,6 @@
       <div class="odx-loading__progress"></div>
     </div>
 
-    <button 
-      v-if="!showPlansEditor"
-      class="odx-plans-toggle" 
-      @click="togglePlansEditor"
-      title="Редагувати плани">
-      ⚙️ Плани
-    </button>
 
     <!-- Компонент редактора планов -->
     <div v-if="showPlansEditor" class="odx-plans-overlay">
@@ -358,6 +351,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Тултип -->
+        <div v-if="tooltip.visible && tooltip.data" ref="tooltipRef" class="custom-tooltip" :style="{
+            left: tooltip.x + 'px',
+            top: tooltip.y + 'px',
+            opacity: tooltip.x === 0 && tooltip.y === 0 ? 0 : 1
+            }">
+            <div class="tooltip-header">
+                <div class="tooltip-title">{{ tooltip.data.entityName }}</div>
+                <div class="tooltip-subtitle">{{ tooltip.data.weekName }} • {{ tooltip.data.indicator }}</div>
+            </div>
+
+            <div class="tooltip-main-value">
+                {{ tooltip.data.mainValue }}
+            </div>
+
+            <div class="tooltip-details">
+                <div v-for="detail in tooltip.data.details" :key="detail.label" class="tooltip-detail-row">
+                    <span class="detail-label">{{ detail.label }}:</span>
+                    <span class="detail-value">{{ detail.value }}</span>
+                </div>
+            </div>
+        </div>
 
   </div>
 </template>
@@ -2386,71 +2402,37 @@ onUnmounted(() => {
 
   .odx-tooltip {
     position: fixed;
-    z-index: 10000;
-    background: var(--odx-surface);
-    border: 1px solid var(--odx-border);
-    border-radius: 8px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    padding: 16px;
-    min-width: 250px;
-    max-width: 400px;
-    pointer-events: none;
-    font-size: 13px;
-    animation: odx-tooltipFadeIn 0.2s ease-out;
+        z-index: 10000;
+        background: var(--surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+        padding: 16px;
+        min-width: 290px;
+        max-width: 600px;
+        pointer-events: none;
+        font-size: 13px;
+        backdrop-filter: blur(8px);
+        animation: tooltipFadeIn 0.2s ease-out;
+        transition: opacity 0.1s ease;
 
-    &__header {
-      // display: flex;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--odx-border);
-      margin-bottom: 8px;
-    }
 
-    &__title {
-      font-weight: 600;
-      color: var(--odx-text);
-      font-size: 14px;
-    }
+        max-height: 80vh;
+        overflow-y: auto;
 
-    &__subtitle {
-      font-size: 12px;
-      color: var(--odx-text-muted);
-      margin-top: 2px;
-    }
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
 
-    &__main {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--odx-primary);
-      text-align: center;
-      padding: 8px;
-      background: #eef2ff;
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
+        &::-webkit-scrollbar-track {
+            background: var(--border-light);
+            border-radius: 2px;
+        }
 
-    &__details {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    &__detail {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2px 0;
-
-      &-label {
-        color: var(--odx-text-muted);
-        font-size: 12px;
-      }
-
-      &-value {
-        font-weight: 600;
-        color: var(--odx-text);
-        font-size: 12px;
-      }
-    }
+        &::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
   }
 
   @keyframes odx-tooltipFadeIn {

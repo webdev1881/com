@@ -1,35 +1,32 @@
 <template>
   <div class="plans-editor">
     <div class="plans-header">
-      <h2>🎯 Редактирование Целевых Показателей</h2>
+      <h2>Редагування Цільових Показників</h2>
       <div class="plans-actions">
         <button @click="resetToDefaults" class="btn btn-secondary">
-          🔄 Сбросить к умолчанию
+          Скинути
         </button>
         <button @click="saveChanges" class="btn btn-primary" :disabled="!hasChanges">
-          💾 Сохранить изменения
-        </button>
-        <button @click="$emit('close')" class="btn btn-close">
-          ✕ Закрыть
+          Зберегти
         </button>
       </div>
     </div>
 
     <div v-if="loading" class="loading">
       <div class="loading-spinner"></div>
-      <p>Загрузка данных...</p>
+      <p>Завантаження...</p>
     </div>
 
     <div v-else-if="error" class="error">
       <div class="error-icon">⚠️</div>
       <p>{{ error }}</p>
-      <button @click="loadData" class="btn btn-primary">Попробовать снова</button>
+      <button @click="loadData" class="btn btn-primary">Спробувати ще</button>
     </div>
 
     <div v-else class="plans-content">
-      <!-- Общие настройки показателей -->
+      <!-- Загальні налаштування показників -->
       <div class="plans-section">
-        <h3>📊 Настройка Показателей</h3>
+        <h3>📊 Налаштування основних балів</h3>
         <div class="targets-grid">
           <div 
             v-for="(target, key) in targetsData.targetTree" 
@@ -40,11 +37,11 @@
             <div class="target-header">
               <h4>{{ target.name }}</h4>
               <span class="target-type">
-                {{ target.type === 'negative' ? '📉 Негативный' : '📈 Позитивный' }}
+                {{ target.type === 'negative' ? '📉 Негативний' : '📈 Позитивний' }}
               </span>
             </div>
             <div class="target-score">
-              <label>Максимальный балл:</label>
+              <label>Максимальний бал:</label>
               <input 
                 type="number" 
                 v-model.number="targetsData.targetTree[key].maxScore"
@@ -58,19 +55,19 @@
         </div>
       </div>
 
-      <!-- Настройки по магазинам -->
+      <!-- Налаштування за магазинами -->
       <div class="plans-section">
-        <h3>🏪 Целевые Показатели по Магазинам</h3>
+        <h3>Цільові Показники по Магазинам</h3>
         
         <div class="filters">
           <input 
             type="text" 
             v-model="searchStore" 
-            placeholder="🔍 Поиск магазина..."
+            placeholder="🔍 Пошук магазину..."
             class="search-input"
           >
           <select v-model="selectedTarget" class="target-filter">
-            <option value="">Все показатели</option>
+            <option value="">Всі показники</option>
             <option v-for="(target, key) in targetsData.targetTree" :key="key" :value="key">
               {{ target.name }}
             </option>
@@ -80,9 +77,10 @@
         <div class="stores-table">
           <div class="table-header">
             <div class="store-name">Магазин</div>
-            <div v-for="(target, key) in filteredTargets" :key="key" class="target-column">
+            <div v-for="(target, key) in filteredObj" :key="key" class="target-column">
+              <!-- {{ target.name }} -->
               {{ target.name }}
-              <small>({{ target.type === 'negative' ? 'мин.' : 'макс.' }})</small>
+              <small>({{ target.type === 'negative' ? 'мін.' : 'макс.' }})</small>
             </div>
           </div>
 
@@ -98,7 +96,7 @@
               </div>
             </div>
             <div 
-              v-for="(target, key) in filteredTargets" 
+              v-for="(target, key) in filteredObj" 
               :key="key" 
               class="target-value"
             >
@@ -120,14 +118,14 @@
         </div>
       </div>
 
-      <!-- Быстрые действия -->
+      <!-- Швидкі дії -->
       <div class="plans-section">
-        <h3>⚡ Быстрые Действия</h3>
+        <h3>⚡ Швидкі дії</h3>
         <div class="quick-actions">
           <div class="action-group">
-            <h4>Применить ко всем магазинам:</h4>
+            <h4>Застосувати до всіх магазинів:</h4>
             <div class="bulk-inputs">
-              <div v-for="(target, key) in targetsData.targetTree" :key="key" class="bulk-input">
+              <div v-for="(target, key) in filteredObj" :key="key" class="bulk-input">
                 <label>{{ target.name }}:</label>
                 <div class="input-group">
                   <input 
@@ -139,7 +137,7 @@
                     class="bulk-value-input"
                   >
                   <button @click="applyBulkValue(key)" class="btn btn-small">
-                    Применить
+                    Застосувати
                   </button>
                 </div>
               </div>
@@ -150,17 +148,17 @@
             <h4>Статистика:</h4>
             <div class="stats">
               <div class="stat-item">
-                <span class="stat-label">Всего магазинов:</span>
+                <span class="stat-label">Всього магазинів:</span>
                 <span class="stat-value">{{ Object.keys(targetsData.storeTargets).length }}</span>
               </div>
               <div class="stat-item">
-                <span class="stat-label">Показателей:</span>
+                <span class="stat-label">Показників:</span>
                 <span class="stat-value">{{ Object.keys(targetsData.targetTree).length }}</span>
               </div>
               <div class="stat-item">
-                <span class="stat-label">Изменений:</span>
+                <span class="stat-label">Змін:</span>
                 <span class="stat-value" :class="{ 'has-changes': hasChanges }">
-                  {{ hasChanges ? 'Есть несохраненные' : 'Нет изменений' }}
+                  {{ hasChanges ? 'Є незбережені' : 'Немає змін' }}
                 </span>
               </div>
             </div>
@@ -169,14 +167,14 @@
       </div>
     </div>
 
-    <!-- Модальное окно подтверждения -->
+    <!-- Модальне вікно підтвердження -->
     <div v-if="showConfirmModal" class="modal-overlay" @click="cancelReset">
       <div class="modal" @click.stop>
-        <h3>🔄 Сброс к настройкам по умолчанию</h3>
-        <p>Вы уверены, что хотите сбросить все изменения и вернуться к настройкам по умолчанию?</p>
+        <h3>🔄 Повернутися до налаштувань за замовчуванням</h3>
+        <p>Ви впевнені, що хочете скинути всі зміни і повернутися до налаштувань за замовчуванням?</p>
         <div class="modal-actions">
-          <button @click="cancelReset" class="btn btn-secondary">Отмена</button>
-          <button @click="confirmReset" class="btn btn-danger">Сбросить</button>
+          <button @click="cancelReset" class="btn btn-secondary">Скасувати</button>
+          <button @click="confirmReset" class="btn btn-danger">Скинути</button>
         </div>
       </div>
     </div>
@@ -186,10 +184,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-// События компонента
 const emit = defineEmits(['close'])
 
-// Реактивные данные
+
 const loading = ref(true)
 const error = ref(null)
 const targetsData = ref({
@@ -203,36 +200,68 @@ const selectedTarget = ref('')
 const bulkValues = ref({})
 const showConfirmModal = ref(false)
 
-// Получение имени магазина по ID
+// const getStoreName = (storeId) => {
+//   const storeNames = targetsData.value || {}
+//   //  {
+//   //   '1': '1089 Киев (РУЛЬКА)',
+//   //   '2': '001 Днепр (РУЛЬКА)',
+//   //   '3': '102 БЦ (РУЛЬКА)',
+//   //   '4': '101 БЦ (ЩЕДРИК)',
+//   //   '5': '240 Богодухов (РУЛЬКА)',
+//   //   '6': '230 Чугуев (РУЛЬКА)',
+//   //   '7': '222 Лозовая (РУЛЬКА)',
+//   //   '8': '220 Ольшаны (РУЛЬКА)',
+//   //   '9': '267 Пересичное (РУЛЬКА)',
+//   //   '10': '229 Красноград (РУЛЬКА)',
+//   //   '11': '199 Первомайский (РУЛЬКА)',
+//   //   '12': '235 Харьков (РУЛЬКА)',
+//   //   '13': '282 Максимовка (ЩЕДРИК)',
+//   //   '14': '271 Горького (ЩЕДРИК)',
+//   //   '15': '210 Люботин (ЩЕДРИК)',
+//   //   '16': '100 БЦ (РУЛЬКА)'
+//   // }
+//   console.log(`🔍 Получаем имя магазина для ID: ${targetsData.value}`);
+  
+//   return storeNames[storeId] || `Магазин ${storeNames[storeId]?.store}`
+// }
+
+const filteredObj = computed(() => {
+  return Object.fromEntries(
+    Object.entries(targetsData.value.targetTree).slice(1) // убираем первый
+  )
+})
+
+
+
+
 const getStoreName = (storeId) => {
-  // В реальном приложении здесь будет поиск в данных продаж
-  const storeNames = {
-    '1': '108 Киев (РУЛЬКА)',
-    '2': '001 Днепр (РУЛЬКА)',
-    '3': '102 БЦ (РУЛЬКА)',
-    '4': '101 БЦ (ЩЕДРИК)',
-    '5': '240 Богодухов (РУЛЬКА)',
-    '6': '230 Чугуев (РУЛЬКА)',
-    '7': '222 Лозовая (РУЛЬКА)',
-    '8': '220 Ольшаны (РУЛЬКА)',
-    '9': '267 Пересичное (РУЛЬКА)',
-    '10': '229 Красноград (РУЛЬКА)',
-    '11': '199 Первомайский (РУЛЬКА)',
-    '12': '235 Харьков (РУЛЬКА)',
-    '13': '282 Максимовка (ЩЕДРИК)',
-    '14': '271 Горького (ЩЕДРИК)',
-    '15': '210 Люботин (ЩЕДРИК)',
-    '16': '100 БЦ (РУЛЬКА)'
+  // Получаем объект с данными магазинов из storeTargets
+  const storeTargets = targetsData.value?.storeTargets || {}
+  
+  console.log(`🔍 Получаем имя магазина для ID: ${storeTargets[storeId]}`);
+  
+  // Если структура данных содержит название магазина напрямую по ключу
+  if (typeof storeTargets[storeId] === 'string') {
+    return storeTargets[storeId]
   }
-  return storeNames[storeId] || `Магазин ${storeId}`
+  
+  // Если структура данных содержит объект с полем name или аналогичным
+  if (typeof storeTargets[storeId] === 'object') {
+    const store = storeTargets[storeId]
+    return store?.store || store?.store || store?.store || `Магазин ${storeTargets[storeId]}`
+  }
+  
+  // Возвращаем дефолтное значение, если данные не найдены
+  return `Магазин ${storeTargets[storeId]}`
 }
 
-// Шаг для полей ввода
+
+
+
 const getInputStep = (targetKey) => {
-  return targetKey === 'unprocessed' ? 0.0000001 : 0.00001
+  return targetKey === 'unprocessed' ? 1 : 0.1
 }
 
-// Фильтрованные данные
 const filteredTargets = computed(() => {
   if (!selectedTarget.value) {
     return targetsData.value.targetTree
@@ -258,16 +287,13 @@ const filteredStores = computed(() => {
   return filtered
 })
 
-// Ключ для localStorage
 const STORAGE_KEY = 'targetsData'
 
-// Загрузка данных
 const loadData = async () => {
   try {
     loading.value = true
     error.value = null
 
-    // Проверяем сохраненные данные в localStorage
     const savedData = getSavedData()
     
     if (savedData) {
@@ -327,7 +353,7 @@ const saveData = (data) => {
 // Инициализация значений для массовых изменений
 const initBulkValues = () => {
   Object.keys(targetsData.value.targetTree).forEach(key => {
-    bulkValues.value[key] = 0.001
+    bulkValues.value[key] = 0.0
   })
 }
 
@@ -364,9 +390,9 @@ const saveChanges = () => {
     console.log('✅ Изменения сохранены успешно')
     
     // Показываем уведомление
-    showNotification('Изменения сохранены!', 'success')
+    showNotification('Зміни збережено!', 'success')
   } else {
-    showNotification('Ошибка сохранения!', 'error')
+    showNotification('Помилка!', 'error')
   }
 }
 
@@ -563,6 +589,8 @@ onUnmounted(() => {
 .btn-small {
   padding: 4px 8px;
   font-size: 12px;
+  background-color: #2563eb ;
+  color: #d1d5db;
 }
 
 .loading, .error {
@@ -621,12 +649,12 @@ onUnmounted(() => {
 }
 
 .targets-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
   gap: 16px;
 }
 
 .target-card {
+  min-width: 190px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   padding: 16px;
@@ -649,7 +677,7 @@ onUnmounted(() => {
 }
 
 .target-header {
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;

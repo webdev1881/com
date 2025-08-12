@@ -28,76 +28,116 @@
   },
   "storeTargets": {
     "1": {
-      "losses": 0.0007,
-      "shortages": 0.00018,
-      "fop": 0.012,
-      "unprocessed": 0.0000008
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "108 Киев (РУЛЬКА)"
     },
     "2": {
-      "losses": 0.0007,
-      "shortages": 0.00020,
-      "fop": 0.015,
-      "unprocessed": 0.0000009
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "001 Днепр (РУЛЬКА)"
     },
     "3": {
-      "losses": 0.0007,
-      "shortages": 0.00022,
-      "fop": 0.013,
-      "unprocessed": 0.0000010
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "102 БЦ (РУЛЬКА)"
     },
     "4": {
-      "losses": 0.0007,
-      "shortages": 0.00019,
-      "fop": 0.014,
-      "unprocessed": 0.0000009
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "101 БЦ (ЩЕДРИК)"
     },
     "5": {
-      "losses": 0.0007,
-      "shortages": 0.00024,
-      "fop": 0.016,
-      "unprocessed": 0.0000011
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "240 Богодухов (РУЛЬКА)"
     },
     "6": {
-      "losses": 0.0007,
-      "shortages": 0.00017,
-      "fop": 0.011,
-      "unprocessed": 0.0000007
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "230 Чугуев (РУЛЬКА)"
     },
     "7": {
-      "losses": 0.0007,
-      "shortages": 0.00016,
-      "fop": 0.010,
-      "unprocessed": 0.0000007
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "222 Лозовая (РУЛЬКА)"
     },
     "8": {
-      "losses": 0.0007,
-      "shortages": 0.00021,
-      "fop": 0.014,
-      "unprocessed": 0.0000009
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "220 Ольшаны (РУЛЬКА)"
     },
     "9": {
-      "losses": 0.0007,
-      "shortages": 0.00017,
-      "fop": 0.011,
-      "unprocessed": 0.0000008
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "267 Пересичное (РУЛЬКА)"
     },
     "10": {
-      "losses": 0.0007,
-      "shortages": 0.00023,
-      "fop": 0.015,
-      "unprocessed": 0.0000010
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "229 Красноград (РУЛЬКА)"
     },
     "11": {
-      "losses": 0.0007,
-      "shortages": 0.00018,
-      "fop": 0.012,
-      "unprocessed": 0.0000008
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "199 Первомайский (РУЛЬКА)"
     },
     "12": {
-      "losses": 0.0007,
-      "shortages": 0.00020,
-      "fop": 0.013,
-      "unprocessed": 0.0000009
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "235 Харьков (РУЛЬКА)"
+    },
+    "13": {
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "282 Максимовка (ЩЕДРИК)"
+    },
+    "14": {
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "271 Горького (ЩЕДРИК)"
+    },
+    "15": {
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "210 Люботин (ЩЕДРИК)"
+    },
+    "16": {
+      "losses": 0,
+      "shortages": 0,
+      "fop": 0,
+      "unprocessed": 0,
+      "store": "100 БЦ (РУЛЬКА)"
     }
   }
 }
