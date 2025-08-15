@@ -353,7 +353,7 @@
     </div>
 
     <!-- Тултип -->
-        <div v-if="tooltip.visible && tooltip.data" ref="tooltipRef" class="custom-tooltip" :style="{
+        <!-- <div v-if="tooltip.visible && tooltip.data" ref="tooltipRef" class="custom-tooltip" :style="{
             left: tooltip.x + 'px',
             top: tooltip.y + 'px',
             opacity: tooltip.x === 0 && tooltip.y === 0 ? 0 : 1
@@ -373,7 +373,7 @@
                     <span class="detail-value">{{ detail.value }}</span>
                 </div>
             </div>
-        </div>
+        </div> -->
 
   </div>
 </template>
