@@ -1,0 +1,509 @@
+{
+  "weeks": [
+    {
+      "id": "period_2",
+      "name": "period_2",
+      "dateRange": "08.01.25 - 14.01.25"
+    },
+    {
+      "id": "period_1",
+      "name": "period_1",
+      "dateRange": "01.01.25 - 07.01.25"
+    }
+  ],
+  "regions": {
+    "region_2": {
+      "id": "region_2",
+      "name": "Харьков",
+      "color": "#3498db",
+      "stores": [
+        {
+          "id": "store_1",
+          "name": "101 БЦ (ЩЕДРИК)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 1938784.0,
+              "fact": 2507130.58,
+              "percent": 1.293145899697955,
+              "losses": 906.39,
+              "shortages": 72053.38,
+              "fop": 134775.0,
+              "shiftRemainder": 12052.345,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 2100233.0,
+              "fact": 2296569.01,
+              "percent": 1.0934829659375886,
+              "losses": 2450.86,
+              "shortages": 22035.74,
+              "fop": 112435.0,
+              "shiftRemainder": 16538.764,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_2",
+          "name": "102 БЦ (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 22755058.0,
+              "fact": 17154613.55,
+              "percent": 0.7538813370636103,
+              "losses": 219251.72,
+              "shortages": 26162.53,
+              "fop": 950479.86,
+              "shiftRemainder": 355339.396,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 6000000.0,
+              "fact": 8754757.28,
+              "percent": 1.4591262133333331,
+              "losses": 2613.98,
+              "shortages": 11687.46,
+              "fop": 881288.0,
+              "shiftRemainder": 4645.74,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_3",
+          "name": "87 БЦ (ЩЕДРИК) Грушевского",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 2686986.0,
+              "fact": 3261158.66,
+              "percent": 1.2136865097175795,
+              "losses": 11393.01,
+              "shortages": 69063.68,
+              "fop": 215080.68,
+              "shiftRemainder": 10297.922,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 3232951.0,
+              "fact": 3156377.33,
+              "percent": 0.9763146209144525,
+              "losses": 8713.28,
+              "shortages": 96077.08,
+              "fop": 193900.0,
+              "shiftRemainder": 22909.393,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_17",
+          "name": "100 БЦ (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_1",
+              "plan": 21379072.0,
+              "fact": 22377804.72,
+              "percent": 1.046715438350177,
+              "losses": 278296.7,
+              "shortages": 452006.75,
+              "fop": 1129236.25,
+              "shiftRemainder": 109023.978,
+              "unprocessed": 0
+            }
+          ]
+        }
+      ]
+    },
+    "region_3": {
+      "id": "region_3",
+      "name": "Днепр",
+      "color": "#82cda2",
+      "stores": [
+        {
+          "id": "store_4",
+          "name": "001 Днепр (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 9091366.0,
+              "fact": 8996043.75,
+              "percent": 0.9895150794721057,
+              "losses": 152767.69,
+              "shortages": 7136.64,
+              "fop": 634099.98,
+              "shiftRemainder": 280739.124,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 8508152.0,
+              "fact": 8782254.22,
+              "percent": 1.0322164225556856,
+              "losses": 114550.21,
+              "shortages": 215004.99,
+              "fop": 560636.86,
+              "shiftRemainder": 17399.486,
+              "unprocessed": 0
+            }
+          ]
+        }
+      ]
+    },
+    "region_1": {
+      "id": "region_1",
+      "name": "Киев",
+      "color": "#cbb86d",
+      "stores": [
+        {
+          "id": "store_5",
+          "name": "108 Киев (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 6743579.0,
+              "fact": 6642878.69,
+              "percent": 0.9850672306204169,
+              "losses": 3409.33,
+              "shortages": 65470.52,
+              "fop": 407617.55,
+              "shiftRemainder": 91207.59,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 6150356.0,
+              "fact": 6331291.48,
+              "percent": 1.0294187003158841,
+              "losses": 848.46,
+              "shortages": 55561.33,
+              "fop": 357491.39,
+              "shiftRemainder": 7466.04,
+              "unprocessed": 0
+            }
+          ]
+        }
+      ]
+    },
+    "region_4": {
+      "id": "region_4",
+      "name": "Харьков",
+      "color": "#b77",
+      "stores": [
+        {
+          "id": "store_6",
+          "name": "199 Первомайский (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 15993683.0,
+              "fact": 16522919.58,
+              "percent": 1.0330903507340992,
+              "losses": 146350.9,
+              "shortages": 167073.5,
+              "fop": 4292.0,
+              "shiftRemainder": 320983.744,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 15306555.0,
+              "fact": 15570538.48,
+              "percent": 1.017246433309128,
+              "losses": 175447.9,
+              "shortages": 272389.03,
+              "fop": 787796.12,
+              "shiftRemainder": 30519.867,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_7",
+          "name": "210 Люботин (ЩЕДРИК)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 3868280.0,
+              "fact": 4053690.1,
+              "percent": 1.047930889180721,
+              "losses": 30464.93,
+              "shortages": 67225.78,
+              "fop": 210065.0,
+              "shiftRemainder": 37777.314,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 3762746.0,
+              "fact": 3787951.38,
+              "percent": 1.0066986663463333,
+              "losses": 46493.04,
+              "shortages": 76596.06,
+              "fop": 218845.31,
+              "shiftRemainder": 7222.8,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_8",
+          "name": "220 Ольшаны (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 19794522.0,
+              "fact": 20005520.42,
+              "percent": 1.0106594349689273,
+              "losses": 188212.22,
+              "shortages": 223063.28,
+              "fop": 6860.0,
+              "shiftRemainder": 140024.65,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 18026002.0,
+              "fact": 19295921.5,
+              "percent": 1.0704493153834111,
+              "losses": 173219.16,
+              "shortages": 10841.97,
+              "fop": 918662.31,
+              "shiftRemainder": 19952.25,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_9",
+          "name": "222 Лозовая (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 21909086.0,
+              "fact": 22951289.81,
+              "percent": 1.0475694791649455,
+              "losses": 208685.61,
+              "shortages": 7435.1,
+              "fop": 16540.0,
+              "shiftRemainder": 408158.787,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 21282486.0,
+              "fact": 21928287.18,
+              "percent": 1.0303442548957862,
+              "losses": 245143.75,
+              "shortages": 258047.3,
+              "fop": 1075360.1,
+              "shiftRemainder": 30274.82,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_10",
+          "name": "229 Красноград (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 17009357.0,
+              "fact": 17127476.36,
+              "percent": 1.0069443753811504,
+              "losses": 124955.03,
+              "shortages": 190824.85,
+              "fop": 13718.0,
+              "shiftRemainder": 129564.885,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 16421348.0,
+              "fact": 16592421.29,
+              "percent": 1.0104177373258272,
+              "losses": 166414.34,
+              "shortages": 21085.25,
+              "fop": 775214.89,
+              "shiftRemainder": 24702.48,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_11",
+          "name": "230 Чугуев (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 24798734.0,
+              "fact": 26507855.93,
+              "percent": 1.068919725095644,
+              "losses": 93468.95,
+              "shortages": 26600.69,
+              "fop": 475842.0,
+              "shiftRemainder": 207175.958,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 24394317.0,
+              "fact": 24732366.73,
+              "percent": 1.013857724731543,
+              "losses": 138177.79,
+              "shortages": 19775.87,
+              "fop": 949887.36,
+              "shiftRemainder": 20745.92,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_12",
+          "name": "235 Харьков (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 6856551.0,
+              "fact": 6716259.54,
+              "percent": 0.9795390627153506,
+              "losses": 83542.95,
+              "shortages": 134250.8,
+              "fop": 226615.0,
+              "shiftRemainder": 262618.62,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 7182566.0,
+              "fact": 6727481.37,
+              "percent": 0.9366403831165631,
+              "losses": 85377.28,
+              "shortages": 167922.88,
+              "fop": 464714.09,
+              "shiftRemainder": 54583.16,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_13",
+          "name": "240 Богодухов (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 30621195.0,
+              "fact": 32052691.81,
+              "percent": 1.046748561249814,
+              "losses": 186262.07,
+              "shortages": 24274.43,
+              "fop": 1244568.0,
+              "shiftRemainder": 332994.595,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 28067946.0,
+              "fact": 30236809.89,
+              "percent": 1.0772719133063744,
+              "losses": 235038.9,
+              "shortages": 405668.69,
+              "fop": 1233206.29,
+              "shiftRemainder": 30542.98,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_14",
+          "name": "267 Пересичное (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 17188836.0,
+              "fact": 17428018.87,
+              "percent": 1.013915012627964,
+              "losses": 116216.48,
+              "shortages": 259230.85,
+              "fop": 431095.0,
+              "shiftRemainder": 141745.955,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 15369836.0,
+              "fact": 16641580.29,
+              "percent": 1.0827428666122396,
+              "losses": 146123.65,
+              "shortages": 275905.56,
+              "fop": 824999.73,
+              "shiftRemainder": 23503.42,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_15",
+          "name": "271 Горького (ЩЕДРИК)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 1219932.0,
+              "fact": 1151560.95,
+              "percent": 0.9439550319198119,
+              "losses": 31147.97,
+              "shortages": 55662.48,
+              "fop": 8988.0,
+              "shiftRemainder": 39011.693,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 1092201.0,
+              "fact": 1178225.13,
+              "percent": 1.0787621783902412,
+              "losses": 14922.41,
+              "shortages": 0,
+              "fop": 64147.12,
+              "shiftRemainder": 4881.04,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_16",
+          "name": "282 Максимовка (ЩЕДРИК)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 3312987.0,
+              "fact": 3213559.51,
+              "percent": 0.9699885662092848,
+              "losses": 28816.78,
+              "shortages": 3780.6,
+              "fop": 205547.0,
+              "shiftRemainder": 68784.183,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 2861224.0,
+              "fact": 3227731.96,
+              "percent": 1.1280948153657315,
+              "losses": 45634.55,
+              "shortages": 68818.87,
+              "fop": 189660.15,
+              "shiftRemainder": 5190.968,
+              "unprocessed": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
