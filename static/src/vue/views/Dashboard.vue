@@ -63,7 +63,7 @@
               <div class="odx-table__cell odx-table__cell--static">Регіон / Магазин</div>
               <div class="odx-table__cell odx-table__cell--group" :style="{ width: dynamicRowWidth }">
                 <div v-for="week in weeks" :key="week.id" class="odx-week">
-                  <div class="odx-week__name">{{ week.name }} ({{ week.dateRange }})</div>
+                  <div class="odx-week__name">{{ week.name }} {{ week.dateRange }}</div>
                 </div>
               </div>
             </div>
@@ -118,7 +118,7 @@
                       <div class="odx-week__columns">
                         <div v-for="indicator in availableIndicators"
                           :key="`region-${region.id}-${week.id}-${indicator.key}`"
-                          class="odx-table__cell odx-table__cell--data odx-tooltip-trigger"
+                          class="odx-table__cell odx-table__cell--data odx-tooltip-trigger odx-hiden_cell"
                           :class="getRegionCellClass(indicator.key, region, week.id)" :style="getStyle(indicator.key)"
                           @mouseenter="showTooltip($event, region, 'region', week.id, indicator.key)"
                           @mouseleave="hideTooltip" @mousemove="updateTooltipPosition">
@@ -402,7 +402,9 @@ const loadData = async () => {
     loading.value = true
     error.value = null
     const [salesResponse, targetsResponse] = await Promise.all([
-      fetch('/com/static/data/real-data.json'),
+      // fetch('/com/static/data/real-data.json'),
+      // fetch('/com/static/data/plans.json'),
+      fetch('/com/static/data/output.json'),
       fetch('/com/static/data/targets.json')
     ])
 
@@ -886,10 +888,27 @@ const getDisplayValue = (weekData, indicator) => {
 }
 
 const darkColors = ref([
-  '#2c3e50', '#34495e', '#1abc9c', '#16a085', '#27ae60', '#2ecc71',
-  '#8e44ad', '#9b59b6', '#2980b9', '#3498db', '#e74c3c', '#c0392b',
-  '#d35400', '#e67e22', '#f39c12', '#f1c40f', '#7f8c8d', '#95a5a6'
+  '#1b263b', // тёмно-синий
+  '#0d1b2a', // глубокий морской
+  '#1a1a2e', // сине-фиолетовый
+  '#2c3e50', // графитовый
+  '#22333b', // угольно-зелёный
+  '#1b4332', // тёмно-зелёный
+  '#2d6a4f', // хвойный
+  '#3a0ca3', // тёмный индиго
+  '#240046', // насыщенный фиолетовый
+  '#4b1459', // тёмная слива
+  '#5a189a', // виноградный
+  '#641220', // бордово-красный
+  '#800f2f', // тёмная малина
+  '#6a040f', // вишнёвый
+  '#5c3c00', // тёмно-янтарный
+  '#4e342e', // кофейный
+  '#3e2723', // шоколадный
+  '#2b2d31'  // нейтральный тёмный
 ])
+
+
 
 const selectedColor = ref('#1c699b')
 const isPaletteOpen = ref(false)
@@ -916,8 +935,8 @@ const changeColor = (color) => { selectedColor.value = color }
 const togglePalette = () => { isPaletteOpen.value = !isPaletteOpen.value }
 const closePalette = () => { isPaletteOpen.value = false }
 
-const regionSortBy = ref({ weekId: 'week_1', columnKey: 'totalScore', direction: 'desc' })
-const storeSortBy = ref({ weekId: 'week_1', columnKey: 'totalScore', direction: 'desc' })
+const regionSortBy = ref({ weekId: 'period_1', columnKey: 'totalScore', direction: 'desc' })
+const storeSortBy = ref({ weekId: 'period_1', columnKey: 'totalScore', direction: 'desc' })
 
 const indicatorGroups = computed(() => {
   const groups = [
@@ -1537,18 +1556,18 @@ const getRegionData = (region, weekId, indicator) => {
   const value = getRegionIndicatorValue(region, weekId, indicator)
 
   switch (value) {
-    case 'totalScore': return value
+    case 'totalScore': return value || '-'
     case 'percent': return `${value}%`
     case 'plan':
     case 'fact': return formatNumber(value)
-    case 'turnover_score': return value
+    case 'turnover_score': return value || '-'
     default:
       if (indicator.endsWith('_percent')) {
         return `${value}%`
       } else if (indicator.endsWith('_score')) {
-        return value
+        return value || '-'
       } else {
-        return formatNumber(value)
+        return formatNumber(value) || '-'
       }
   }
 }
@@ -1985,8 +2004,8 @@ onUnmounted(() => {
 
       &:hover {
         transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        z-index: 5;
+        box-shadow: 0 1px 8px #02347a80;
+        z-index: 10;
         position: relative;
       }
 
@@ -2046,7 +2065,7 @@ onUnmounted(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 14px;
       border-right: 1px solid var(--odx-border);
       text-align: center;
       overflow: hidden;
@@ -2238,12 +2257,13 @@ onUnmounted(() => {
     }
   }
 
+  
   .odx-region-info,
   .odx-store-info {
     display: flex;
     align-items: center;
     gap: 8px;
-
+    
     &__indicator {
       width: 10px;
       height: 10px;
@@ -2252,21 +2272,23 @@ onUnmounted(() => {
       border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
-    &__title,
     &__name {
       font-weight: 600;
       color: var(--odx-text);
       font-size: 14px;
     }
-
+    
     &__region {
       font-size: 12px;
       color: var(--odx-text-muted);
       font-weight: 400;
     }
   }
-
+  
   .odx-store-info {
+    &__title {
+      font-weight: 400;
+    }
     &__name {
       font-weight: 400;
     }
@@ -2401,7 +2423,9 @@ onUnmounted(() => {
   }
 
   .odx-tooltip {
-    position: fixed;
+    display: flex;
+    flex-direction: column;
+        position: fixed;
         z-index: 10000;
         background: var(--surface);
         border: 1px solid var(--border-color);
@@ -2415,20 +2439,23 @@ onUnmounted(() => {
         backdrop-filter: blur(8px);
         animation: tooltipFadeIn 0.2s ease-out;
         transition: opacity 0.1s ease;
-
-
         max-height: 80vh;
         overflow-y: auto;
+
+        &__main {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
 
         &::-webkit-scrollbar {
             width: 4px;
         }
-
         &::-webkit-scrollbar-track {
             background: var(--border-light);
             border-radius: 2px;
         }
-
         &::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 2px;
@@ -3053,7 +3080,7 @@ onUnmounted(() => {
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
     }
   }
-
+ 
   .odx-plans-overlay {
     position: fixed !important;
     top: 0 !important;
@@ -3099,4 +3126,9 @@ onUnmounted(() => {
 .odx-table__row-move {
   transition: transform 0.4s ease;
 }
+
+.odx-hiden_cell {
+  font-size: 11px!important;
+}
+
 </style>

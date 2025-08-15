@@ -213,10 +213,10 @@ class VueController(http.Controller):
                 default_targets = {
                     "targetTree": {
                         "turnover": {"name": "Оборот", "maxScore": 100, "type": "positive"},
-                        "losses": {"name": "Списання ТМЦ", "maxScore": 20, "type": "negative"},
+                        "losses": {"name": "Списання", "maxScore": 20, "type": "negative"},
                         "shortages": {"name": "Нестачі", "maxScore": 100, "type": "negative"},
                         "fop": {"name": "ФОП", "maxScore": 15, "type": "negative"},
-                        "unprocessed": {"name": "Непровед. списання", "maxScore": 10, "type": "negative"}
+                        "unprocessed": {"name": "Повернення", "maxScore": 10, "type": "negative"}
                     },
                     "storeTargets": {
                         "1": {"losses": 0.0007, "shortages": 0.00018, "fop": 0.012, "unprocessed": 0.0000008},

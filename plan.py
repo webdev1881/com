@@ -42,28 +42,27 @@ def calculate_percent(plan, fact):
         return 0
     return fact / plan
 
-def parse_targets_json(df, output_targets_path):
+def parse_targets_json(df_original, output_targets_path):
     """
     Создает JSON файл с целевыми показателями
     """
     try:
-        # Читаем вторую строку как метаданные
-        if len(df) < 2:
+        # Читаем вторую строку как метаданные (строка 2, индекс 1)
+        if len(df_original) < 2:
             print("Недостаточно строк для обработки целевых показателей")
             return
             
-        metadata_row = df.iloc[1]  # Вторая строка (индекс 1)
-        
-        # Основные показатели (столбцы 9-12, индексы 8-11)
+        # Основные показатели
         base_indicators = ['losses', 'shortages', 'fop', 'shiftRemainder']
         
         # Создаем targetTree
         target_tree = {}
         
-        # Добавляем turnover (maxScore из столбца 7, индекс 6, строка 2)
+        # Добавляем turnover (maxScore из столбца 7, индекс 6, строка 2, индекс 1)
         turnover_max_score = 100  # По умолчанию
         try:
-            turnover_value = metadata_row.iloc[6]  # Столбец 7, строка 2
+            # Читаем из оригинального DataFrame, строка 2, столбец 7
+            turnover_value = df_original.iloc[1, 6]  # строка 2 (индекс 1), столбец 7 (индекс 6)
             if not pd.isna(turnover_value):
                 turnover_max_score = float(turnover_value)
         except:
@@ -77,23 +76,21 @@ def parse_targets_json(df, output_targets_path):
         
         # Названия показателей
         indicator_names = {
-            'losses': 'Списання ТМЦ',
+            'losses': 'Списання',
             'shortages': 'Нестачі', 
             'fop': 'ФОП',
-            'shiftRemainder': 'Непровед. списання'
+            'shiftRemainder': 'Повернення'
         }
         
         # maxScore показателей из второй строки (столбцы 13-16, индексы 12-15)
         max_scores = []
         for i in range(4):  # 4 показателя
-            col_index = 12 + i  # столбцы 13-16
+            col_index = 12 + i  # столбцы 13-16 (индексы 12-15)
             try:
-                if col_index < len(metadata_row):
-                    value = metadata_row.iloc[col_index]
-                    if not pd.isna(value):
-                        max_scores.append(float(value))
-                    else:
-                        max_scores.append(0)
+                # Читаем из оригинального DataFrame, строка 2
+                value = df_original.iloc[1, col_index]  # строка 2 (индекс 1)
+                if not pd.isna(value):
+                    max_scores.append(float(value))
                 else:
                     max_scores.append(0)
             except:
@@ -113,13 +110,16 @@ def parse_targets_json(df, output_targets_path):
         store_targets = {}
         
         # Обрабатываем данные магазинов (начиная с 3 строки, индекс 2)
-        for idx in range(2, len(df)):  # Начинаем с 3 строки
-            row = df.iloc[idx]
+        for idx in range(2, len(df_original)):  # Начинаем с 3 строки
+            row = df_original.iloc[idx]
             
-            if pd.isna(row.iloc[5]):  # Проверяем store_id (столбец 6)
+            if idx >= len(df_original) or len(row) < 6:
                 continue
                 
-            store_id = str(row.iloc[5])  # Используем реальный store_id из столбца 6
+            if pd.isna(row.iloc[5]):  # Проверяем store_id (столбец 6, индекс 5)
+                continue
+                
+            store_id = str(row.iloc[5])  # store_id из столбца 6 (индекс 5)
             store_name = str(row.iloc[4]) if not pd.isna(row.iloc[4]) else f"Магазин {store_id}"
             
             # Создаем данные для магазина
@@ -129,7 +129,7 @@ def parse_targets_json(df, output_targets_path):
             
             # Добавляем целевые показатели из столбцов 13-16 (индексы 12-15)
             for i, indicator_name in enumerate(base_indicators):
-                target_col_index = 12 + i  # столбцы 13-16
+                target_col_index = 12 + i  # столбцы 13-16 (индексы 12-15)
                 
                 target_value = 0
                 if target_col_index < len(row):
@@ -174,7 +174,8 @@ def parse_excel_to_json(excel_file_path, output_json_path):
     try:
         # Читаем Excel файл
         print(f"Читаю файл: {excel_file_path}")
-        df = pd.read_excel(excel_file_path)
+        df_original = pd.read_excel(excel_file_path)  # Сохраняем оригинальный DataFrame
+        df = df_original.copy()
         
         # Проверяем количество столбцов
         if len(df.columns) < 12:
@@ -193,10 +194,6 @@ def parse_excel_to_json(excel_file_path, output_json_path):
                 df.rename(columns={df.columns[i]: col_name}, inplace=True)
         
         # Пропускаем первые 2 строки (заголовок и метаданные) для основных данных
-        # Но сначала сохраняем их для обработки
-        header_df = df.copy()
-        
-        # Удаляем первые 2 строки для основной обработки
         df_data = df.iloc[2:].copy()  # Начинаем с 3 строки
         
         # Удаляем строки с пустыми значениями в ключевых столбцах
@@ -303,7 +300,7 @@ def parse_excel_to_json(excel_file_path, output_json_path):
         print(f"Обработано регионов: {len(result['regions'])}")
         print(f"Обработано недель: {len(result['weeks'])}")
         
-        return result, header_df
+        return result, df_original  # Возвращаем оригинальный DataFrame
         
     except Exception as e:
         print(f"Ошибка при обработке файла: {str(e)}")
@@ -326,13 +323,13 @@ def main():
         return
     
     # Парсим основной файл
-    result, header_df = parse_excel_to_json(excel_file, json_file)
+    result, df_original = parse_excel_to_json(excel_file, json_file)
     
-    if result and header_df is not None:
+    if result and df_original is not None:
         print("Основной JSON создан успешно!")
         
         # Создаем файл целевых показателей
-        targets_result = parse_targets_json(header_df, targets_file)
+        targets_result = parse_targets_json(df_original, targets_file)
         
         if targets_result:
             print("Файл целевых показателей создан успешно!")

@@ -1,20 +1,20 @@
 {
   "weeks": [
     {
-      "id": "period_2",
-      "name": "period_2",
-      "dateRange": "08.01.25 - 14.01.25"
+      "id": "period_1",
+      "name": "Липень 2025",
+      "dateRange": ""
     },
     {
-      "id": "period_1",
-      "name": "period_1",
-      "dateRange": "01.01.25 - 07.01.25"
+      "id": "period_2",
+      "name": "Червень 2025",
+      "dateRange": ""
     }
   ],
   "regions": {
     "region_2": {
       "id": "region_2",
-      "name": "Харьков",
+      "name": "Біла Церква",
       "color": "#3498db",
       "stores": [
         {
