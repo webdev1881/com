@@ -2,23 +2,51 @@
   "weeks": [
     {
       "id": "period_1",
-      "name": "Липень 2025",
-      "dateRange": ""
+      "name": "period_1",
+      "dateRange": "08.01.25 - 14.01.25"
     },
     {
       "id": "period_2",
-      "name": "Червень 2025",
-      "dateRange": ""
+      "name": "period_2",
+      "dateRange": "01.01.25 - 07.01.25"
     }
   ],
   "regions": {
     "region_2": {
       "id": "region_2",
-      "name": "Біла Церква",
+      "name": "Белая Церковь",
       "color": "#3498db",
       "stores": [
         {
           "id": "store_1",
+          "name": "100 БЦ (РУЛЬКА)",
+          "weeklyData": [
+            {
+              "weekId": "period_2",
+              "plan": 19591959.0,
+              "fact": 23351606.63,
+              "percent": 1.1918974835543499,
+              "losses": 340116.97,
+              "shortages": 905066.28,
+              "fop": 1183687.85,
+              "shiftRemainder": 415908.174,
+              "unprocessed": 0
+            },
+            {
+              "weekId": "period_1",
+              "plan": 21379072.0,
+              "fact": 22377804.72,
+              "percent": 1.046715438350177,
+              "losses": 278296.7,
+              "shortages": 452006.75,
+              "fop": 1129236.25,
+              "shiftRemainder": 109023.978,
+              "unprocessed": 0
+            }
+          ]
+        },
+        {
+          "id": "store_2",
           "name": "101 БЦ (ЩЕДРИК)",
           "weeklyData": [
             {
@@ -46,7 +74,7 @@
           ]
         },
         {
-          "id": "store_2",
+          "id": "store_3",
           "name": "102 БЦ (РУЛЬКА)",
           "weeklyData": [
             {
@@ -74,7 +102,7 @@
           ]
         },
         {
-          "id": "store_3",
+          "id": "store_4",
           "name": "87 БЦ (ЩЕДРИК) Грушевского",
           "weeklyData": [
             {
@@ -100,23 +128,6 @@
               "unprocessed": 0
             }
           ]
-        },
-        {
-          "id": "store_17",
-          "name": "100 БЦ (РУЛЬКА)",
-          "weeklyData": [
-            {
-              "weekId": "period_1",
-              "plan": 21379072.0,
-              "fact": 22377804.72,
-              "percent": 1.046715438350177,
-              "losses": 278296.7,
-              "shortages": 452006.75,
-              "fop": 1129236.25,
-              "shiftRemainder": 109023.978,
-              "unprocessed": 0
-            }
-          ]
         }
       ]
     },
@@ -126,7 +137,7 @@
       "color": "#82cda2",
       "stores": [
         {
-          "id": "store_4",
+          "id": "store_5",
           "name": "001 Днепр (РУЛЬКА)",
           "weeklyData": [
             {
@@ -161,7 +172,7 @@
       "color": "#cbb86d",
       "stores": [
         {
-          "id": "store_5",
+          "id": "store_6",
           "name": "108 Киев (РУЛЬКА)",
           "weeklyData": [
             {
@@ -196,7 +207,7 @@
       "color": "#b77",
       "stores": [
         {
-          "id": "store_6",
+          "id": "store_7",
           "name": "199 Первомайский (РУЛЬКА)",
           "weeklyData": [
             {
@@ -224,7 +235,7 @@
           ]
         },
         {
-          "id": "store_7",
+          "id": "store_8",
           "name": "210 Люботин (ЩЕДРИК)",
           "weeklyData": [
             {
@@ -252,7 +263,7 @@
           ]
         },
         {
-          "id": "store_8",
+          "id": "store_9",
           "name": "220 Ольшаны (РУЛЬКА)",
           "weeklyData": [
             {
@@ -280,7 +291,7 @@
           ]
         },
         {
-          "id": "store_9",
+          "id": "store_10",
           "name": "222 Лозовая (РУЛЬКА)",
           "weeklyData": [
             {
@@ -308,7 +319,7 @@
           ]
         },
         {
-          "id": "store_10",
+          "id": "store_11",
           "name": "229 Красноград (РУЛЬКА)",
           "weeklyData": [
             {
@@ -336,7 +347,7 @@
           ]
         },
         {
-          "id": "store_11",
+          "id": "store_12",
           "name": "230 Чугуев (РУЛЬКА)",
           "weeklyData": [
             {
@@ -364,7 +375,7 @@
           ]
         },
         {
-          "id": "store_12",
+          "id": "store_13",
           "name": "235 Харьков (РУЛЬКА)",
           "weeklyData": [
             {
@@ -392,7 +403,7 @@
           ]
         },
         {
-          "id": "store_13",
+          "id": "store_14",
           "name": "240 Богодухов (РУЛЬКА)",
           "weeklyData": [
             {
@@ -420,7 +431,7 @@
           ]
         },
         {
-          "id": "store_14",
+          "id": "store_15",
           "name": "267 Пересичное (РУЛЬКА)",
           "weeklyData": [
             {
@@ -448,7 +459,7 @@
           ]
         },
         {
-          "id": "store_15",
+          "id": "store_16",
           "name": "271 Горького (ЩЕДРИК)",
           "weeklyData": [
             {
@@ -468,7 +479,7 @@
               "fact": 1178225.13,
               "percent": 1.0787621783902412,
               "losses": 14922.41,
-              "shortages": 0,
+              "shortages": 0.0,
               "fop": 64147.12,
               "shiftRemainder": 4881.04,
               "unprocessed": 0
@@ -476,7 +487,7 @@
           ]
         },
         {
-          "id": "store_16",
+          "id": "store_17",
           "name": "282 Максимовка (ЩЕДРИК)",
           "weeklyData": [
             {

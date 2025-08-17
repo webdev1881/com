@@ -1,343 +1,227 @@
 import pandas as pd
 import json
-from datetime import datetime, timedelta
 from collections import defaultdict
-import sys
-import os
+import datetime
 
-def parse_week_info(week_data):
+def parse_excel_to_json():
     """
-    Извлекает информацию о неделе из данных
+    Парсит Excel файл data.xlsx и создает два JSON файла:
+    - output.json: данные по неделям, регионам и магазинам
+    - targets.json: целевые показатели и метаданные
     """
-    weeks_info = {}
-    unique_weeks = week_data.unique()
     
-    for i, week_id in enumerate(sorted(unique_weeks)):
-        if pd.isna(week_id):
-            continue
-            
-        # Генерируем информацию о периоде
-        period_num = i + 1
-        period_id = f"period_{period_num}"
-        
-        # Генерируем даты для периода (примерные)
-        # В реальном проекте логику нужно адаптировать под ваши данные
-        current_year = datetime.now().year
-        start_date = datetime(current_year, 1, 1) + timedelta(weeks=period_num-1)
-        end_date = start_date + timedelta(days=6)
-        
-        weeks_info[week_id] = {
-            "id": period_id,
-            "name": period_id,
-            "dateRange": f"{start_date.strftime('%d.%m.%y')} - {end_date.strftime('%d.%m.%y')}"
-        }
-    
-    return weeks_info
-
-def calculate_percent(plan, fact):
-    """
-    Вычисляет процент выполнения плана
-    """
-    if pd.isna(plan) or pd.isna(fact) or plan == 0:
-        return 0
-    return fact / plan
-
-def parse_targets_json(df_original, output_targets_path):
-    """
-    Создает JSON файл с целевыми показателями
-    """
+    # Читаем Excel файл
     try:
-        # Читаем вторую строку как метаданные (строка 2, индекс 1)
-        if len(df_original) < 2:
-            print("Недостаточно строк для обработки целевых показателей")
-            return
-            
-        # Основные показатели
-        base_indicators = ['losses', 'shortages', 'fop', 'shiftRemainder']
-        
-        # Создаем targetTree
-        target_tree = {}
-        
-        # Добавляем turnover (maxScore из столбца 7, индекс 6, строка 2, индекс 1)
-        turnover_max_score = 100  # По умолчанию
-        try:
-            # Читаем из оригинального DataFrame, строка 2, столбец 7
-            turnover_value = df_original.iloc[1, 6]  # строка 2 (индекс 1), столбец 7 (индекс 6)
-            if not pd.isna(turnover_value):
-                turnover_max_score = float(turnover_value)
-        except:
-            pass
-                
-        target_tree['turnover'] = {
-            'name': 'Оборот',
-            'maxScore': turnover_max_score,
-            'type': 'positive'
-        }
-        
-        # Названия показателей
-        indicator_names = {
-            'losses': 'Списання',
-            'shortages': 'Нестачі', 
-            'fop': 'ФОП',
-            'shiftRemainder': 'Повернення'
-        }
-        
-        # maxScore показателей из второй строки (столбцы 13-16, индексы 12-15)
-        max_scores = []
-        for i in range(4):  # 4 показателя
-            col_index = 12 + i  # столбцы 13-16 (индексы 12-15)
-            try:
-                # Читаем из оригинального DataFrame, строка 2
-                value = df_original.iloc[1, col_index]  # строка 2 (индекс 1)
-                if not pd.isna(value):
-                    max_scores.append(float(value))
-                else:
-                    max_scores.append(0)
-            except:
-                max_scores.append(0)
-        
-        # Добавляем показатели с правильными maxScore и типом "negative"
-        for i, indicator_name in enumerate(base_indicators):
-            display_name = indicator_names.get(indicator_name, indicator_name.title())
-            
-            target_tree[indicator_name] = {
-                'name': display_name,
-                'maxScore': max_scores[i],
-                'type': 'negative'
-            }
-        
-        # Создаем storeTargets
-        store_targets = {}
-        
-        # Обрабатываем данные магазинов (начиная с 3 строки, индекс 2)
-        for idx in range(2, len(df_original)):  # Начинаем с 3 строки
-            row = df_original.iloc[idx]
-            
-            if idx >= len(df_original) or len(row) < 6:
-                continue
-                
-            if pd.isna(row.iloc[5]):  # Проверяем store_id (столбец 6, индекс 5)
-                continue
-                
-            store_id = str(row.iloc[5])  # store_id из столбца 6 (индекс 5)
-            store_name = str(row.iloc[4]) if not pd.isna(row.iloc[4]) else f"Магазин {store_id}"
-            
-            # Создаем данные для магазина
-            store_data = {
-                'store': store_name
-            }
-            
-            # Добавляем целевые показатели из столбцов 13-16 (индексы 12-15)
-            for i, indicator_name in enumerate(base_indicators):
-                target_col_index = 12 + i  # столбцы 13-16 (индексы 12-15)
-                
-                target_value = 0
-                if target_col_index < len(row):
-                    try:
-                        target_val = row.iloc[target_col_index]
-                        if not pd.isna(target_val):
-                            target_value = float(target_val)
-                    except:
-                        pass
-                        
-                store_data[indicator_name] = target_value
-            
-            # Добавляем unprocessed если его нет
-            if 'unprocessed' not in store_data:
-                store_data['unprocessed'] = 0
-                
-            store_targets[store_id] = store_data  # Используем реальный store_id как ключ
-        
-        # Создаем финальную структуру
-        targets_result = {
-            'targetTree': target_tree,
-            'storeTargets': store_targets
-        }
-        
-        # Сохраняем в JSON файл
-        with open(output_targets_path, 'w', encoding='utf-8') as f:
-            json.dump(targets_result, f, ensure_ascii=False, indent=2)
-        
-        print(f"Файл целевых показателей создан: {output_targets_path}")
-        print(f"Обработано показателей: {len(target_tree)}")
-        print(f"Обработано магазинов: {len(store_targets)}")
-        
-        return targets_result
-        
+        df = pd.read_excel('data.xlsx', header=None)
+    except FileNotFoundError:
+        print("Ошибка: файл data.xlsx не найден!")
+        return
     except Exception as e:
-        print(f"Ошибка при создании файла целевых показателей: {str(e)}")
-        return None
-def parse_excel_to_json(excel_file_path, output_json_path):
-    """
-    Основная функция парсинга Excel файла в JSON
-    """
-    try:
-        # Читаем Excel файл
-        print(f"Читаю файл: {excel_file_path}")
-        df_original = pd.read_excel(excel_file_path)  # Сохраняем оригинальный DataFrame
-        df = df_original.copy()
-        
-        # Проверяем количество столбцов
-        if len(df.columns) < 12:
-            print(f"Внимание: В файле {len(df.columns)} столбцов, ожидается минимум 12")
-        
-        # Присваиваем названия столбцам согласно описанию
-        column_names = [
-            'weekId', 'region_name', 'region_id', 'region_color', 
-            'stores_name', 'store_id', 'plan', 'fact', 
-            'losses', 'shortages', 'fop', 'shiftRemainder'
-        ]
-        
-        # Переименовываем столбцы
-        for i, col_name in enumerate(column_names):
-            if i < len(df.columns):
-                df.rename(columns={df.columns[i]: col_name}, inplace=True)
-        
-        # Пропускаем первые 2 строки (заголовок и метаданные) для основных данных
-        df_data = df.iloc[2:].copy()  # Начинаем с 3 строки
-        
-        # Удаляем строки с пустыми значениями в ключевых столбцах
-        df_data = df_data.dropna(subset=['region_id', 'store_id'])
-        
-        print(f"Обработано {len(df_data)} строк данных")
-        
-        # Получаем информацию о неделях
-        weeks_info = parse_week_info(df_data['weekId'])
-        
-        # Создаем маппинг для period_id
-        week_to_period = {}
-        for original_week, week_info in weeks_info.items():
-            week_to_period[original_week] = week_info['id']
-        
-        # Группируем данные по регионам
-        regions_data = defaultdict(lambda: {
-            'stores': defaultdict(lambda: {
-                'weeklyData': []
-            })
-        })
-        
-        # Создаем счетчики для store_id
-        store_id_mapping = {}
-        store_counter = 1
-        
-        # Обрабатываем каждую строку данных
-        for _, row in df_data.iterrows():
-            region_id = str(row['region_id'])  # Убираем добавление "region_" так как оно уже есть в данных
-            original_store_id = str(row['store_id'])
-            week_id = row['weekId']
-            
-            # Создаем уникальный store_id
-            if original_store_id not in store_id_mapping:
-                store_id_mapping[original_store_id] = f"store_{store_counter}"
-                store_counter += 1
-            
-            store_id = store_id_mapping[original_store_id]
-            
-            # Определяем period_id
-            period_id = week_to_period.get(week_id, "period_1")
-            
-            # Заполняем данные региона
-            if 'id' not in regions_data[region_id]:
-                regions_data[region_id].update({
-                    'id': region_id,  # region_id уже содержит полный ID типа "region_2"
-                    'name': str(row['region_name']) if not pd.isna(row['region_name']) else f"Регион {region_id}",
-                    'color': str(row['region_color']) if not pd.isna(row['region_color']) else "#000000"
-                })
-            
-            # Заполняем данные магазина
-            store_data = regions_data[region_id]['stores'][store_id]
-            if 'id' not in store_data:
-                store_data.update({
-                    'id': store_id,
-                    'name': str(row['stores_name']) if not pd.isna(row['stores_name']) else f"Магазин {store_id}"
-                })
-            
-            # Добавляем недельные данные
-            plan = float(row['plan']) if not pd.isna(row['plan']) else 0
-            fact = float(row['fact']) if not pd.isna(row['fact']) else 0
-            
-            weekly_data = {
-                'weekId': period_id,
-                'plan': plan,
-                'fact': fact,
-                'percent': calculate_percent(plan, fact),
-                'losses': float(row['losses']) if not pd.isna(row['losses']) else 0,
-                'shortages': float(row['shortages']) if not pd.isna(row['shortages']) else 0,
-                'fop': float(row['fop']) if not pd.isna(row['fop']) else 0,
-                'shiftRemainder': float(row['shiftRemainder']) if not pd.isna(row['shiftRemainder']) else 0,
-                'unprocessed': 0  # По умолчанию 0, можно изменить логику
-            }
-            
-            store_data['weeklyData'].append(weekly_data)
-        
-        # Преобразуем в финальную структуру
-        result = {
-            'weeks': list(reversed(list(weeks_info.values()))),
-            'regions': {}
-        }
-        
-        for region_id, region_data in regions_data.items():
-            stores_list = []
-            for store_id, store_data in region_data['stores'].items():
-                stores_list.append({
-                    'id': store_data['id'],
-                    'name': store_data['name'],
-                    'weeklyData': store_data['weeklyData']
-                })
-            
-            result['regions'][region_id] = {
-                'id': region_id,  # region_id уже содержит полный ID типа "region_2"
-                'name': region_data['name'],
-                'color': region_data['color'],
-                'stores': stores_list
-            }
-        
-        # Сохраняем в JSON файл
-        with open(output_json_path, 'w', encoding='utf-8') as f:
-            json.dump(result, f, ensure_ascii=False, indent=2)
-        
-        print(f"JSON файл успешно создан: {output_json_path}")
-        print(f"Обработано регионов: {len(result['regions'])}")
-        print(f"Обработано недель: {len(result['weeks'])}")
-        
-        return result, df_original  # Возвращаем оригинальный DataFrame
-        
-    except Exception as e:
-        print(f"Ошибка при обработке файла: {str(e)}")
-        return None, None
-
-def main():
-    """
-    Главная функция
-    """
-    # Настройки файлов
-    excel_file = "data.xlsx"  # Путь к вашему Excel файлу
-    json_file = "output.json"  # Путь к выходному JSON файлу
-    targets_file = "targets.json"  # Путь к файлу целевых показателей
-    
-    # Проверяем существование входного файла
-    if not os.path.exists(excel_file):
-        print(f"Файл {excel_file} не найден!")
-        print("Пожалуйста, поместите Excel файл в папку со скриптом и назовите его 'data.xlsx'")
-        print("Или измените путь к файлу в переменной excel_file")
+        print(f"Ошибка при чтении файла: {e}")
         return
     
-    # Парсим основной файл
-    result, df_original = parse_excel_to_json(excel_file, json_file)
+    # Получаем заголовки из первой строки
+    headers = df.iloc[0].tolist()
     
-    if result and df_original is not None:
-        print("Основной JSON создан успешно!")
+    # Получаем метаданные из второй строки
+    metadata = df.iloc[1].tolist()
+    
+    # Получаем данные (строки 3+)
+    data_rows = df.iloc[2:].copy()
+    data_rows.columns = headers
+    
+    # Извлекаем метаданные
+    turnover_max_score = metadata[6]  # Столбец 7 (индекс 6)
+    
+    # maxScore для показателей из столбцов 13-16 (индексы 12-15)
+    losses_max_score = metadata[12]
+    shortages_max_score = metadata[13]
+    fop_max_score = metadata[14]
+    shift_remainder_max_score = metadata[15]
+    
+    # Создаем структуру данных
+    weeks_set = set()
+    regions_data = defaultdict(lambda: {
+        'id': '',
+        'name': '',
+        'color': '',
+        'stores': defaultdict(lambda: {
+            'id': '',
+            'name': '',
+            'weeklyData': []
+        })
+    })
+    
+    store_targets = {}
+    
+    # Обрабатываем каждую строку данных
+    for _, row in data_rows.iterrows():
+        # Пропускаем строки с пустыми данными
+        if pd.isna(row.iloc[0]) or pd.isna(row.iloc[5]):
+            continue
+            
+        week_id = str(row.iloc[0])  # periodData
+        region_name = str(row.iloc[1])  # region_name
+        region_id = str(row.iloc[2])  # region_id
+        region_color = str(row.iloc[3])  # region_color
+        store_name = str(row.iloc[4])  # stores_name
+        store_id = str(row.iloc[5])  # store_id
+        plan = float(row.iloc[6]) if not pd.isna(row.iloc[6]) else 0.0  # Plan
+        fact = float(row.iloc[7]) if not pd.isna(row.iloc[7]) else 0.0  # Fact
+        losses = float(row.iloc[8]) if not pd.isna(row.iloc[8]) else 0.0  # losses
+        shortages = float(row.iloc[9]) if not pd.isna(row.iloc[9]) else 0.0  # shortages
+        fop = float(row.iloc[10]) if not pd.isna(row.iloc[10]) else 0.0  # fop
+        shift_remainder = float(row.iloc[11]) if not pd.isna(row.iloc[11]) else 0.0  # shiftRemainder
         
-        # Создаем файл целевых показателей
-        targets_result = parse_targets_json(df_original, targets_file)
+        # Вспомогательные данные из столбцов 13-16 для storeTargets
+        losses_target = float(row.iloc[12]) if not pd.isna(row.iloc[12]) else 0.0  # losses (вспомогательные)
+        shortages_target = float(row.iloc[13]) if not pd.isna(row.iloc[13]) else 0.0  # shortages (вспомогательные)
+        fop_target = float(row.iloc[14]) if not pd.isna(row.iloc[14]) else 0.0  # fop (вспомогательные)
+        shift_remainder_target = float(row.iloc[15]) if not pd.isna(row.iloc[15]) else 0.0  # shiftRemainder (вспомогательные)
         
-        if targets_result:
-            print("Файл целевых показателей создан успешно!")
-            print("Обработка завершена!")
-        else:
-            print("Ошибка при создании файла целевых показателей")
+        # Добавляем неделю
+        weeks_set.add(week_id)
+        
+        # Заполняем данные региона
+        if regions_data[region_id]['id'] == '':
+            regions_data[region_id]['id'] = region_id
+            regions_data[region_id]['name'] = region_name
+            regions_data[region_id]['color'] = region_color
+        
+        # Заполняем данные магазина
+        if regions_data[region_id]['stores'][store_id]['id'] == '':
+            regions_data[region_id]['stores'][store_id]['id'] = store_id
+            regions_data[region_id]['stores'][store_id]['name'] = store_name
+        
+        # Вычисляем percent
+        percent = fact / plan if plan != 0 else 0
+        
+        # Добавляем недельные данные
+        weekly_data = {
+            "weekId": week_id,
+            "plan": plan,
+            "fact": fact,
+            "percent": percent,
+            "losses": losses,
+            "shortages": shortages,
+            "fop": fop,
+            "shiftRemainder": shift_remainder,
+            "unprocessed": 0
+        }
+        
+        regions_data[region_id]['stores'][store_id]['weeklyData'].append(weekly_data)
+        
+        # Сохраняем целевые показатели для магазина (из вспомогательных столбцов 13-16)
+        if store_id not in store_targets:
+            store_targets[store_id] = {
+                "losses": losses_target,
+                "shortages": shortages_target,
+                "fop": fop_target,
+                "shiftRemainder": shift_remainder_target,
+                "unprocessed": 0,
+                "store": store_name
+            }
+    
+    # Создаем список недель (в прямом порядке)
+    weeks_list = sorted(list(weeks_set))
+    weeks_output = []
+    
+    for week_id in weeks_list:
+        # Генерируем примерные даты (можно настроить под ваши нужды)
+        week_name = week_id
+        date_range = generate_date_range(week_id)
+        
+        weeks_output.append({
+            "id": week_id,
+            "name": week_name,
+            "dateRange": date_range
+        })
+    
+    # Преобразуем структуру данных для выходного формата
+    regions_output = {}
+    for region_id, region_data in regions_data.items():
+        stores_list = []
+        for store_id, store_data in region_data['stores'].items():
+            stores_list.append({
+                "id": store_data['id'],
+                "name": store_data['name'],
+                "weeklyData": store_data['weeklyData']
+            })
+        
+        regions_output[region_id] = {
+            "id": region_data['id'],
+            "name": region_data['name'],
+            "color": region_data['color'],
+            "stores": stores_list
+        }
+    
+    # Формируем output.json
+    output_data = {
+        "weeks": weeks_output,
+        "regions": regions_output
+    }
+    
+    # Формируем targets.json
+    targets_data = {
+        "targetTree": {
+            "turnover": {
+                "name": "Оборот",
+                "maxScore": int(turnover_max_score) if not pd.isna(turnover_max_score) else 100,
+                "type": "positive"
+            },
+            "losses": {
+                "name": "Списання ТМЦ",
+                "maxScore": int(losses_max_score) if not pd.isna(losses_max_score) else 20,
+                "type": "negative"
+            },
+            "shortages": {
+                "name": "Нестачі",
+                "maxScore": int(shortages_max_score) if not pd.isna(shortages_max_score) else 100,
+                "type": "negative"
+            },
+            "fop": {
+                "name": "ФОП",
+                "maxScore": int(fop_max_score) if not pd.isna(fop_max_score) else 15,
+                "type": "negative"
+            },
+            "shiftRemainder": {
+                "name": "Непровед. списання",
+                "maxScore": int(shift_remainder_max_score) if not pd.isna(shift_remainder_max_score) else 10,
+                "type": "negative"
+            }
+        },
+        "storeTargets": store_targets
+    }
+    
+    # Записываем JSON файлы
+    try:
+        with open('output.json', 'w', encoding='utf-8') as f:
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
+        print("Файл output.json успешно создан!")
+        
+        with open('targets.json', 'w', encoding='utf-8') as f:
+            json.dump(targets_data, f, ensure_ascii=False, indent=2)
+        print("Файл targets.json успешно создан!")
+        
+    except Exception as e:
+        print(f"Ошибка при записи JSON файлов: {e}")
+
+def generate_date_range(week_id):
+    """
+    Генерирует диапазон дат для недели.
+    Можно настроить под ваши нужды.
+    """
+    # Простая логика генерации дат на основе week_id
+    # Можно изменить под ваши требования
+    if "period_1" in week_id:
+        return "08.01.25 - 14.01.25"
+    elif "period_2" in week_id:
+        return "01.01.25 - 07.01.25"
     else:
-        print("Произошла ошибка при обработке основного файла")
+        # Генерируем произвольную дату
+        return f"01.01.25 - 07.01.25"
 
 if __name__ == "__main__":
-    main()
+    print("Начинаем парсинг Excel файла...")
+    parse_excel_to_json()
+    print("Парсинг завершен!")

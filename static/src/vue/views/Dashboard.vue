@@ -259,12 +259,27 @@
           <div class="kpi-section">
             <h3>⚠️ Проблемні зони</h3>
             <div class="kpi-cards">
-              <div class="kpi-card danger">
-                <div class="kpi-value">{{ processedData.problemStores }}</div>
+
+              <div class="kpi-card danger odx-tip_tool ">
+                <div class="kpi-value">{{ processedData.problemStores.length }}</div>
+                <div class="odx-tip_tooltext" :style="`background-color: ${selectedColor};`">
+                  <div v-for="val in (processedData.problemStores)" class="odx-tip_tooltext_item">
+                    <div class="item">{{ val.name }}</div>
+                    <div class="item">{{ val.overallTotalScore }}</div>
+                  </div>
+                </div>
                 <div class="kpi-label">Магазинів в зоні ризику</div>
               </div>
-              <div class="kpi-card warning">
-                <div class="kpi-value">{{ processedData.belowPlanStores }}</div>
+
+              <div class="kpi-card warning odx-tip_tool ">
+                <div class="kpi-value">{{ processedData.belowPlanStores.length }}</div>
+                <div class="odx-tip_tooltext" :style="`background-color: ${selectedColor};`">
+                  <div v-for="val in (processedData.belowPlanStores)" class="odx-tip_tooltext_item">
+                    <div class="item">{{ val.name }}</div>
+                    <div class="item">{{ ((val.weeklyData[0].fact + val.weeklyData[1].fact)/(val.weeklyData[0].plan + val.weeklyData[1].plan)*100).toFixed(1) }}%</div>
+                  </div>
+                </div>
+
                 <div class="kpi-label">Не виконують план</div>
               </div>
             </div>
@@ -346,12 +361,13 @@
       <div class="odx-tooltip__main">{{ tooltip.data.mainValue }}</div>
       <div class="odx-tooltip__details">
         <div v-for="detail in tooltip.data.details" :key="detail.label" class="odx-tooltip__detail">
-          <span class="odx-tooltip__detail-label">{{ detail.label }}:</span>
+          
+          <span class="odx-tooltip__detail-label">{{ detail.label }}</span>
           <span class="odx-tooltip__detail-value">{{ detail.value }}</span>
         </div>
       </div>
     </div>
-
+ 
     <!-- Тултип -->
         <!-- <div v-if="tooltip.visible && tooltip.data" ref="tooltipRef" class="custom-tooltip" :style="{
             left: tooltip.x + 'px',
@@ -393,9 +409,30 @@ const formatter = ref(false)
 const KPITopStores = ref(5)
 const isOpen = ref(false)
 const planScore = ref(0)
-
 const showPlansEditor = ref(false)
 const dynamicTargetsData = ref(null)
+const darkColors = ref([
+  '#1b263b', // тёмно-синий
+  '#0d1b2a', // глубокий морской
+  '#1a1a2e', // сине-фиолетовый
+  '#2c3e50', // графитовый
+  '#22333b', // угольно-зелёный
+  '#1b4332', // тёмно-зелёный
+  '#2d6a4f', // хвойный
+  '#3a0ca3', // тёмный индиго
+  '#240046', // насыщенный фиолетовый
+  '#4b1459', // тёмная слива
+  '#5a189a', // виноградный
+  '#641220', // бордово-красный
+  '#800f2f', // тёмная малина
+  '#6a040f', // вишнёвый
+  '#5c3c00', // тёмно-янтарный
+  '#4e342e', // кофейный
+  '#3e2723', // шоколадный
+  '#2b2d31'  // нейтральный тёмный
+])
+const selectedColor = ref('#1c699b')
+const isPaletteOpen = ref(false)
 
 const loadData = async () => {
   try {
@@ -436,6 +473,8 @@ const loadData = async () => {
 
     initializeVisibility()
     processData()
+    getSavedColor()
+
   } catch (err) {
     console.error('Ошибка загрузки данных:', err)
     error.value = err.message || 'Ошибка загрузки данных'
@@ -443,6 +482,24 @@ const loadData = async () => {
     setTimeout(() => {
       loading.value = false
     }, 400)
+  }
+}
+
+const saveColor = (color) => {
+  try {
+    localStorage.setItem('selectedColor', color)
+  } catch (err) {
+    console.error('Ошибка сохранения цвета в localStorage:', err)
+  }
+}
+
+const getSavedColor = () => {
+  try {
+    selectedColor.value = localStorage.getItem('selectedColor') || selectedColor.value
+    return selectedColor.value
+  } catch (err) {
+    console.error('Ошибка чтения цвета из localStorage:', err)
+    return selectedColor.value // Цвет по умолчанию
   }
 }
 
@@ -463,10 +520,9 @@ const getSavedTargetsFromMemory = () => {
 const saveTargetsToMemory = (data) => {
   try {
     localStorage.setItem('targetsData', JSON.stringify(data))
-    console.log('✓ Данные планов сохранены в localStorage:', data)
     return true
   } catch (err) {
-    console.error('❌ Ошибка сохранения в localStorage:', err)
+    console.error('Ошибка сохранения в localStorage:', err)
     return false
   }
 }
@@ -474,6 +530,9 @@ const saveTargetsToMemory = (data) => {
 // Слушаем изменения от компонента планов
 const handlePlansDataUpdate = (event) => {
   const newTargetsData = event.detail
+
+  console.log('Получены новые данные планов:', newTargetsData);
+  
   
   // Обновляем данные
   targetsData.value = newTargetsData
@@ -484,8 +543,6 @@ const handlePlansDataUpdate = (event) => {
   
   // Пересчитываем все данные с новыми планами
   processData()
-  
-  console.log('Планы обновлены динамически!')
 }
 
 // Переключение редактора планов
@@ -523,6 +580,11 @@ const processedData = computed(() => {
   const totalScore = allStores.reduce((sum, store) => sum + (store.overallTotalScore || 0), 0)
   const averageScore = totalStores > 0 ? Math.round(totalScore / totalStores) : 0
 
+  console.log(averageScore , 'averageScore');
+  console.log(allStores, 'totalScore');
+  
+  
+
 
 
   let totalPlan = 0
@@ -552,7 +614,7 @@ const processedData = computed(() => {
     .sort((a, b) => (b.overallTotalScore || 0) - (a.overallTotalScore || 0))
     .slice(0, KPITopStores.value)
 
-  const problemStores = allStores.filter(store => (store.overallTotalScore || 0) < averageScore * 0.7).length
+  const problemStores = allStores.filter(store => (store.overallTotalScore || 0) < averageScore * 0.5)
   const belowPlanStores = allStores.filter(store => {
     let storePlan = 0
     let storeFact = 0
@@ -563,8 +625,8 @@ const processedData = computed(() => {
         storeFact += weekData.fact || 0
       }
     })
-    return storePlan > 0 && (storeFact / storePlan) < 0.95
-  }).length
+    return storePlan > 0 && (storeFact / storePlan) < 1
+  })
 
   const topIssues = []
   let summ = 0;
@@ -598,7 +660,7 @@ const processedData = computed(() => {
     })
   }
   planScore.value = summ
-  topIssues.sort((a, b) => b.totalValue - a.totalValue).splice(3)
+  topIssues.sort((a, b) => b.totalValue - a.totalValue)
 
   const weeklyComparison = weeks.value.map(week => {
     let weekTotalScore = 0
@@ -887,31 +949,7 @@ const getDisplayValue = (weekData, indicator) => {
   }
 }
 
-const darkColors = ref([
-  '#1b263b', // тёмно-синий
-  '#0d1b2a', // глубокий морской
-  '#1a1a2e', // сине-фиолетовый
-  '#2c3e50', // графитовый
-  '#22333b', // угольно-зелёный
-  '#1b4332', // тёмно-зелёный
-  '#2d6a4f', // хвойный
-  '#3a0ca3', // тёмный индиго
-  '#240046', // насыщенный фиолетовый
-  '#4b1459', // тёмная слива
-  '#5a189a', // виноградный
-  '#641220', // бордово-красный
-  '#800f2f', // тёмная малина
-  '#6a040f', // вишнёвый
-  '#5c3c00', // тёмно-янтарный
-  '#4e342e', // кофейный
-  '#3e2723', // шоколадный
-  '#2b2d31'  // нейтральный тёмный
-])
 
-
-
-const selectedColor = ref('#1c699b')
-const isPaletteOpen = ref(false)
 
 const darkenColor = (color, percent = 20) => {
   const num = parseInt(color.replace("#", ""), 16)
@@ -931,7 +969,10 @@ const headerStyle = computed(() => ({
   borderSpacing: 0
 }))
 
-const changeColor = (color) => { selectedColor.value = color }
+const changeColor = (color) => { 
+  selectedColor.value = color
+  saveColor(color)
+}
 const togglePalette = () => { isPaletteOpen.value = !isPaletteOpen.value }
 const closePalette = () => { isPaletteOpen.value = false }
 
@@ -1129,7 +1170,6 @@ const calculateWeeklyMetrics = (weekId, allStores) => {
     const weekData = getStoreWeekData(store, weekId)
     const storeTargetConfig = storeTargets[store.id] || {}
     weekData.percent = calculateTurnoverPercent(weekData.plan, weekData.fact)
-    let weeklyScore = 0
 
     Object.entries(targetTree).forEach(([key, targetConfig]) => {
       if (key === 'turnover') return
@@ -1150,26 +1190,28 @@ const calculateWeeklyMetrics = (weekId, allStores) => {
       weekData[`${key}_percent`] = Math.round(achievementPercent)
       weekData[`${key}_target`] = target
     })
+  })
 
-    Object.entries(targetTree).forEach(([key, targetConfig]) => {
-      if (key === 'turnover') return
+  Object.entries(targetTree).forEach(([key, targetConfig]) => {
+    if (key === 'turnover') return
+    const maxPercent = Math.max(...allStores.map(store => {
+      const weekData = getStoreWeekData(store, weekId)
+      return weekData[`${key}_percent`] || 0
+    }))
 
-      const achievementPercent = weekData[`${key}_percent`] || 0
-      const maxPercent = Math.max(...allStores.map(s => {
-        const sWeekData = getStoreWeekData(s, weekId)
-        return sWeekData[`${key}_percent`] || 0
-      }))
-
+    console.log(`Метрика: ${key}, Максимальный процент: ${maxPercent}, MaxScore: ${targetConfig.maxScore}`)
+    allStores.forEach(store => {
+      const weekData = getStoreWeekData(store, weekId)
+      const currentPercent = weekData[`${key}_percent`] || 0
       let score = 0
-      if (maxPercent > 0) {
-        score = Math.round((achievementPercent / maxPercent) * targetConfig.maxScore)
+      
+      if (maxPercent > 0 && currentPercent > 0) {
+        score = Math.round((currentPercent / maxPercent) * targetConfig.maxScore)
       }
 
+      console.log(`Магазин ${store.id}: текущий процент: ${currentPercent}, балл: ${score}`)
       weekData[`${key}_score`] = score
-      weeklyScore += score
     })
-
-    weekData.totalScore = weeklyScore
   })
 
   if (targetTree.turnover) {
@@ -1188,15 +1230,23 @@ const calculateWeeklyMetrics = (weekId, allStores) => {
       }
 
       weekData.turnover_score = turnoverScore
-      weekData.totalScore = (weekData.totalScore || 0) + turnoverScore
-    })
-  } else {
-    allStores.forEach(store => {
-      const weekData = getStoreWeekData(store, weekId)
-      const turnoverScore = Math.round(weekData.percent || 0)
-      weekData.totalScore = (weekData.totalScore || 0) + turnoverScore
     })
   }
+
+  allStores.forEach(store => {
+    const weekData = getStoreWeekData(store, weekId)
+    let totalScore = 0
+
+    Object.entries(targetTree).forEach(([key, targetConfig]) => {
+      if (key === 'turnover') {
+        totalScore += weekData.turnover_score || 0
+      } else {
+        totalScore += weekData[`${key}_score`] || 0
+      }
+    })
+
+    weekData.totalScore = totalScore
+  })
 
   calculateColumnRanks(weekId, allStores)
 }
@@ -1415,7 +1465,6 @@ const sortedRegions = computed(() => {
     if (region.weeklyData) {
       region.weeklyData.forEach(weekData => {
         totalScore += weekData.totalScore || 0
-        console.log(weekData);
       })
     }
     region.overallTotalScore = totalScore
@@ -3129,6 +3178,43 @@ onUnmounted(() => {
 
 .odx-hiden_cell {
   font-size: 11px!important;
+}
+
+.odx-tooltip__detail {
+  display: flex;
+  justify-content: space-between;
+}
+
+.odx-tip_tooltext_item {
+ display: flex;
+ gap: 8px;
+ justify-content: space-between;
+}
+
+.odx-tip_tool {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.odx-tip_tool .odx-tip_tooltext {
+  visibility: hidden;
+  width: max-content;
+  // background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+
+  /* Position the tooltip */
+  position: absolute;
+  right: -10px;
+  z-index: 1;
+}
+
+.odx-tip_tool:hover .odx-tip_tooltext {
+  visibility: visible;
 }
 
 </style>

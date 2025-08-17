@@ -5,6 +5,7 @@ import { resolve } from 'path'
 // ES импорт нашего изолятора
 import vueStyleIsolator from './postcss-vue-isolator.mjs'
 
+
 export default defineConfig({
   plugins: [vue()],
 
