@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <!-- Шаблон для Vue Dashboard -->
     <t t-name="com.VueDashboardTemplate" owl="1">
         <div class="vue-integration-container" t-ref="root">
 
@@ -20,13 +19,8 @@
         </div>
     </t>
     
-    <!-- Шаблон для Vue Components -->
     <t t-name="com.VuePlansTemplate" owl="1">
         <div class="vue-integration-container" t-ref="root">
-            <!-- <div class="vue-header">
-                <h2><i class="fa fa-puzzle-piece"></i> Vue.js Components</h2>
-                Планы
-            </div> -->
             <div id="vue-mount-point" class="vue-mount-point">
                 <div class="vue-loading">
                     <div class="d-flex align-items-center justify-content-center" style="min-height: 300px;">

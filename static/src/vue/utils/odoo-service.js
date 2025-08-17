@@ -1,7 +1,3 @@
-/**
- * Сервис для взаимодействия с Odoo API
- */
-
 class OdooService {
   constructor() {
     this.baseUrl = window.location.origin
@@ -18,9 +14,6 @@ class OdooService {
     }
   }
 
-  /**
-   * Выполняет RPC запрос к Odoo
-   */
   async rpc(url, params = {}) {
     try {
       const response = await fetch(url, {
@@ -54,9 +47,6 @@ class OdooService {
     }
   }
 
-  /**
-   * Получает CSRF токен
-   */
   getCSRFToken() {
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
                   this.session?.csrf_token ||
@@ -64,9 +54,6 @@ class OdooService {
     return token
   }
 
-  /**
-   * Универсальный метод для получения данных
-   */
   async getData({ model = 'res.users', domain = [], fields = [], limit = 50, offset = 0 } = {}) {
     try {
       const result = await this.rpc('/vue/api/data', {
@@ -86,9 +73,6 @@ class OdooService {
     }
   }
 
-  /**
-   * Получение информации о текущем пользователе
-   */
   async getUserInfo() {
     try {
       const result = await this.rpc('/vue/api/user-info')
@@ -103,7 +87,6 @@ class OdooService {
   }
 }
 
-// Создаем единственный экземпляр сервиса
 export const odooService = new OdooService()
 
 export default OdooService

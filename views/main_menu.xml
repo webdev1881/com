@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Сначала определяем действия -->
         <record id="action_vue_dashboard" model="ir.actions.client">
-            <field name="name">Аналитика продаж</field>
+            <field name="name">ЗВІТ</field>
             <field name="tag">vue.dashboard.page</field>
             <field name="target">current</field>
         </record>
         
         <record id="action_vue_plans" model="ir.actions.client">
-            <field name="name">Настройки планов</field>
+            <field name="name">Налаштування планів</field>
             <field name="tag">vue.plans.page</field>
             <field name="target">current</field>
         </record>
         
-        <!-- Потом создаем меню -->
         <menuitem 
             id="menu_vue_main" 
             name="Компасс" 
@@ -23,14 +21,14 @@
         
         <menuitem 
             id="menu_vue_dashboard" 
-            name="Аналитика продаж" 
+            name="ЗВІТ" 
             parent="menu_vue_main"
             action="action_vue_dashboard" 
             sequence="10"/>
         
         <menuitem 
             id="menu_vue_plans" 
-            name="Настройки планов" 
+            name="Налаштування планів" 
             parent="menu_vue_main"
             action="action_vue_plans" 
             sequence="20"/>

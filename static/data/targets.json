@@ -6,7 +6,7 @@
       "type": "positive"
     },
     "losses": {
-      "name": "Списання ТМЦ",
+      "name": "Списання",
       "maxScore": 20,
       "type": "negative"
     },
@@ -21,7 +21,7 @@
       "type": "negative"
     },
     "shiftRemainder": {
-      "name": "Непровед. списання",
+      "name": "Повернення",
       "maxScore": 10,
       "type": "negative"
     }

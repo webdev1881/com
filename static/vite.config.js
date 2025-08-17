@@ -2,9 +2,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
-// ES импорт нашего изолятора
-import vueStyleIsolator from './postcss-vue-isolator.mjs'
-
 
 export default defineConfig({
   plugins: [vue()],
@@ -36,11 +33,6 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        // Упрощенный изолятор стилей
-        vueStyleIsolator({
-          selector: '.vue-isolated-app',
-          // убираем опцию specificity - используем встроенную логику
-        })
       ]
     }
   },

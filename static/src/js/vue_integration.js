@@ -1,5 +1,4 @@
 /** @odoo-module **/
-
 import { registry } from "@web/core/registry";
 import { Component, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 
@@ -11,7 +10,6 @@ export class VueDashboardPage extends Component {
         onMounted(async () => {
             await this.loadVueApp('dashboard');
         });
-        
         onWillUnmount(() => {
             this.destroyVueApp();
         });
@@ -19,8 +17,7 @@ export class VueDashboardPage extends Component {
 
     async loadVueApp(route = 'dashboard') {
         try {
-            await this.waitForVueApp();
-            
+            await this.waitForVueApp();            
             const mountElement = this.rootRef.el?.querySelector('#vue-mount-point');
             if (mountElement && window.createVueOdooApp) {
                 this.vueApp = window.createVueOdooApp(mountElement, route);
@@ -102,7 +99,7 @@ export class VuePlansPage extends Component {
                 throw new Error('Элемент для монтирования Vue не найден');
             }
         } catch (error) {
-            console.error('❌ Ошибка загрузки Vue приложения:', error);
+            console.error('Ошибка загрузки', error);
             this.showError(error);
         }
     }
@@ -126,7 +123,7 @@ export class VuePlansPage extends Component {
                 this.vueApp.unmount();
                 console.log('✓ Vue приложение успешно размонтировано');
             } catch (error) {
-                console.error('❌ Ошибка при размонтировании Vue приложения:', error);
+                console.error('Ошибка при размонтировании', error);
             }
         }
     }
@@ -149,6 +146,6 @@ export class VuePlansPage extends Component {
     static template = "com.VuePlansTemplate";
 }
 
-// Регистрируем компоненты в Odoo
+// компоненты в Odoo
 registry.category("actions").add("vue.dashboard.page", VueDashboardPage);
 registry.category("actions").add("vue.plans.page", VuePlansPage);
