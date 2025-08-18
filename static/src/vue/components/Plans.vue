@@ -78,7 +78,6 @@
           <div class="table-header">
             <div class="store-name">Магазин</div>
             <div v-for="(target, key) in filteredObj" :key="key" class="target-column">
-              <!-- {{ target.name }} -->
               {{ target.name }}
               <small>({{ target.type === 'negative' ? 'мін.' : 'макс.' }})</small>
             </div>
@@ -186,7 +185,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const emit = defineEmits(['close'])
 
-
 const loading = ref(true)
 const error = ref(null)
 const targetsData = ref({
@@ -200,63 +198,28 @@ const selectedTarget = ref('')
 const bulkValues = ref({})
 const showConfirmModal = ref(false)
 
-// const getStoreName = (storeId) => {
-//   const storeNames = targetsData.value || {}
-//   //  {
-//   //   '1': '1089 Киев (РУЛЬКА)',
-//   //   '2': '001 Днепр (РУЛЬКА)',
-//   //   '3': '102 БЦ (РУЛЬКА)',
-//   //   '4': '101 БЦ (ЩЕДРИК)',
-//   //   '5': '240 Богодухов (РУЛЬКА)',
-//   //   '6': '230 Чугуев (РУЛЬКА)',
-//   //   '7': '222 Лозовая (РУЛЬКА)',
-//   //   '8': '220 Ольшаны (РУЛЬКА)',
-//   //   '9': '267 Пересичное (РУЛЬКА)',
-//   //   '10': '229 Красноград (РУЛЬКА)',
-//   //   '11': '199 Первомайский (РУЛЬКА)',
-//   //   '12': '235 Харьков (РУЛЬКА)',
-//   //   '13': '282 Максимовка (ЩЕДРИК)',
-//   //   '14': '271 Горького (ЩЕДРИК)',
-//   //   '15': '210 Люботин (ЩЕДРИК)',
-//   //   '16': '100 БЦ (РУЛЬКА)'
-//   // }
-//   console.log(`🔍 Получаем имя магазина для ID: ${targetsData.value}`);
-  
-//   return storeNames[storeId] || `Магазин ${storeNames[storeId]?.store}`
-// }
-
 const filteredObj = computed(() => {
   return Object.fromEntries(
-    Object.entries(targetsData.value.targetTree).slice(1) // убираем первый
+    Object.entries(targetsData.value.targetTree).slice(1)
   )
 })
 
-
-
-
 const getStoreName = (storeId) => {
-  // Получаем объект с данными магазинов из storeTargets
   const storeTargets = targetsData.value?.storeTargets || {}
   
   console.log(`🔍 Получаем имя магазина для ID: ${storeTargets[storeId]}`);
   
-  // Если структура данных содержит название магазина напрямую по ключу
   if (typeof storeTargets[storeId] === 'string') {
     return storeTargets[storeId]
   }
-  
-  // Если структура данных содержит объект с полем name или аналогичным
+
   if (typeof storeTargets[storeId] === 'object') {
     const store = storeTargets[storeId]
     return store?.store || store?.store || store?.store || `Магазин ${storeTargets[storeId]}`
   }
   
-  // Возвращаем дефолтное значение, если данные не найдены
   return `Магазин ${storeTargets[storeId]}`
 }
-
-
-
 
 const getInputStep = (targetKey) => {
   return targetKey === 'unprocessed' ? 1 : 0.1
@@ -300,7 +263,6 @@ const loadData = async () => {
       targetsData.value = savedData
       console.log('✓ Загружены сохраненные данные из localStorage')
     } else {
-      // Загружаем данные по умолчанию из targets.json
       const response = await fetch('/com/static/data/targets.json')
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -309,15 +271,12 @@ const loadData = async () => {
       const defaultData = await response.json()
       targetsData.value = defaultData
       
-      // Сохраняем в localStorage как базовые настройки
       saveData(defaultData)
       console.log('✓ Загружены данные по умолчанию из targets.json')
     }
 
-    // Сохраняем копию оригинальных данных
     originalData.value = JSON.parse(JSON.stringify(targetsData.value))
     
-    // Инициализируем значения для массовых изменений
     initBulkValues()
     
   } catch (err) {
@@ -328,7 +287,6 @@ const loadData = async () => {
   }
 }
 
-// Работа с localStorage
 const getSavedData = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -350,19 +308,16 @@ const saveData = (data) => {
   }
 }
 
-// Инициализация значений для массовых изменений
 const initBulkValues = () => {
   Object.keys(targetsData.value.targetTree).forEach(key => {
     bulkValues.value[key] = 0.0
   })
 }
 
-// Отметка об изменениях
 const markAsChanged = () => {
   hasChanges.value = true
 }
 
-// Применение массового значения
 const applyBulkValue = (targetKey) => {
   const value = bulkValues.value[targetKey]
   if (value === undefined || value === null) return
@@ -375,7 +330,6 @@ const applyBulkValue = (targetKey) => {
   console.log(`✓ Применено значение ${value} для ${targetKey} ко всем магазинам`)
 }
 
-// Сохранение изменений
 const saveChanges = () => {
   if (!hasChanges.value) return
 
@@ -384,21 +338,17 @@ const saveChanges = () => {
   if (success) {
     hasChanges.value = false
     
-    // Отправляем событие об обновлении данных
     emitDataUpdate()
     
     console.log('✅ Изменения сохранены успешно')
-    
-    // Показываем уведомление
+  
     showNotification('Зміни збережено!', 'success')
   } else {
     showNotification('Помилка!', 'error')
   }
 }
 
-// Отправка события об обновлении данных
 const emitDataUpdate = () => {
-  // Создаем событие для Dashboard компонента
   const event = new CustomEvent('plansDataUpdated', {
     detail: targetsData.value
   })
@@ -407,7 +357,6 @@ const emitDataUpdate = () => {
   console.log('📡 Отправлено событие обновления данных')
 }
 
-// Сброс к настройкам по умолчанию
 const resetToDefaults = () => {
   showConfirmModal.value = true
 }
@@ -417,10 +366,8 @@ const confirmReset = async () => {
     loading.value = true
     showConfirmModal.value = false
     
-    // Удаляем данные из localStorage
     localStorage.removeItem(STORAGE_KEY)
     
-    // Загружаем оригинальные данные
     const response = await fetch('/com/static/data/targets.json')
     const defaultData = await response.json()
     
@@ -428,10 +375,8 @@ const confirmReset = async () => {
     originalData.value = JSON.parse(JSON.stringify(defaultData))
     hasChanges.value = false
     
-    // Сохраняем как новые базовые настройки
     saveData(defaultData)
     
-    // Уведомляем Dashboard об изменениях
     emitDataUpdate()
     
     console.log('🔄 Данные сброшены к настройкам по умолчанию')
@@ -450,9 +395,7 @@ const cancelReset = () => {
   showConfirmModal.value = false
 }
 
-// Показ уведомлений
 const showNotification = (message, type = 'info') => {
-  // Простая реализация уведомлений
   const notification = document.createElement('div')
   notification.className = `notification notification-${type}`
   notification.textContent = message
@@ -476,7 +419,6 @@ const showNotification = (message, type = 'info') => {
   }, 3000)
 }
 
-// Отслеживание изменений с клавиатуры
 const handleKeydown = (event) => {
   if (event.ctrlKey && event.key === 's') {
     event.preventDefault()
@@ -487,7 +429,6 @@ const handleKeydown = (event) => {
   }
 }
 
-// Lifecycle hooks
 onMounted(() => {
   loadData()
   document.addEventListener('keydown', handleKeydown)
@@ -677,7 +618,6 @@ onUnmounted(() => {
 }
 
 .target-header {
-  /* display: flex; */
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;

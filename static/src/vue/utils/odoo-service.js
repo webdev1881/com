@@ -8,9 +8,9 @@ class OdooService {
   async init() {
     try {
       this.session = window.odoo?.session || null
-      console.log('✓ Odoo Service инициализирован')
+      console.log('Odoo Service')
     } catch (error) {
-      console.error('❌ Ошибка инициализации Odoo Service:', error)
+      console.error('Ошибка инициализации:', error)
     }
   }
 
@@ -78,7 +78,7 @@ class OdooService {
       const result = await this.rpc('/vue/api/user-info')
       return result
     } catch (error) {
-      console.error('Ошибка получения информации о пользователе:', error)
+      console.error('Ошибка пользователя:', error)
       return {
         success: false,
         error: error.message

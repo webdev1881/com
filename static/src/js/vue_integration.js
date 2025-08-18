@@ -21,9 +21,8 @@ export class VueDashboardPage extends Component {
             const mountElement = this.rootRef.el?.querySelector('#vue-mount-point');
             if (mountElement && window.createVueOdooApp) {
                 this.vueApp = window.createVueOdooApp(mountElement, route);
-                console.log('✓ Vue Dashboard успешно запущен в Odoo');
             } else {
-                throw new Error('Элемент для монтирования Vue не найден');
+                throw new Error('Элемент не найден');
             }
         } catch (error) {
             console.error('❌ Ошибка загрузки Vue приложения:', error);
@@ -48,9 +47,9 @@ export class VueDashboardPage extends Component {
         if (this.vueApp && typeof this.vueApp.unmount === 'function') {
             try {
                 this.vueApp.unmount();
-                console.log('✓ Vue приложение успешно размонтировано');
+                console.log('размонтировано');
             } catch (error) {
-                console.error('❌ Ошибка при размонтировании Vue приложения:', error);
+                console.error('❌ Ошибка :', error);
             }
         }
     }
@@ -63,7 +62,7 @@ export class VueDashboardPage extends Component {
                     <div class="alert alert-danger">
                         <h4><i class="fa fa-exclamation-triangle"></i> Ошибка загрузки Vue приложения</h4>
                         <p>${error.message || error}</p>
-                        <small>Проверьте консоль браузера для подробностей</small>
+                        <small>консоль браузера для подробностей</small>
                     </div>
                 </div>
             `;
@@ -94,9 +93,9 @@ export class VuePlansPage extends Component {
             const mountElement = this.rootRef.el?.querySelector('#vue-mount-point');
             if (mountElement && window.createVueOdooApp) {
                 this.vueApp = window.createVueOdooApp(mountElement, route);
-                console.log('✓ Vue Plans успешно запущен в Odoo');
+                console.log('запущен в Odoo');
             } else {
-                throw new Error('Элемент для монтирования Vue не найден');
+                throw new Error('Элемент не найден');
             }
         } catch (error) {
             console.error('Ошибка загрузки', error);
@@ -121,7 +120,7 @@ export class VuePlansPage extends Component {
         if (this.vueApp && typeof this.vueApp.unmount === 'function') {
             try {
                 this.vueApp.unmount();
-                console.log('✓ Vue приложение успешно размонтировано');
+                console.log('успешно размонтировано');
             } catch (error) {
                 console.error('Ошибка при размонтировании', error);
             }
@@ -136,7 +135,7 @@ export class VuePlansPage extends Component {
                     <div class="alert alert-danger">
                         <h4><i class="fa fa-exclamation-triangle"></i> Ошибка загрузки Vue приложения</h4>
                         <p>${error.message || error}</p>
-                        <small>Проверьте консоль браузера для подробностей</small>
+                        <small>консоль браузера для подробностей</small>
                     </div>
                 </div>
             `;

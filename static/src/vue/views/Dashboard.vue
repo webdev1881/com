@@ -422,7 +422,7 @@ const loadData = async () => {
     error.value = null
     const [salesResponse, targetsResponse] = await Promise.all([
       fetch('/com/static/data/output.json'),
-      fetch('/com/static/data/plans.json'),
+      fetch('/com/static/data/targets.json'),
       // fetch('output.json'),
       // fetch('targets.json')
     ])
@@ -445,7 +445,6 @@ const loadData = async () => {
       throw new Error('Неверная структура данных целей')
     }
 
-    // НОВОЕ: Проверяем сохраненные данные в памяти
     const savedTargets = getSavedTargetsFromMemory()
 
     salesData.value = salesDataResult
@@ -485,9 +484,6 @@ const getSavedColor = () => {
   }
 }
 
-
-
-// Функция получения сохраненных данных из localStorage
 const getSavedTargetsFromMemory = () => {
   try {
     const saved = localStorage.getItem('targetsData')
@@ -498,7 +494,6 @@ const getSavedTargetsFromMemory = () => {
   }
 }
 
-// Функция сохранения в localStorage
 const saveTargetsToMemory = (data) => {
   try {
     localStorage.setItem('targetsData', JSON.stringify(data))
@@ -509,25 +504,17 @@ const saveTargetsToMemory = (data) => {
   }
 }
 
-// Слушаем изменения от компонента планов
 const handlePlansDataUpdate = (event) => {
   const newTargetsData = event.detail
 
-  // console.log('Получены новые данные планов:', newTargetsData);
-
-
-  // Обновляем данные
   targetsData.value = newTargetsData
   dynamicTargetsData.value = newTargetsData
 
-  // Сохраняем в память
   saveTargetsToMemory(newTargetsData)
 
-  // Пересчитываем все данные с новыми планами
   processData()
 }
 
-// Переключение редактора планов
 const togglePlansEditor = () => {
   showPlansEditor.value = !showPlansEditor.value
 }
@@ -688,7 +675,6 @@ const processedData = computed(() => {
       let problemStores = []
       const storeAverages = [] // Массив для хранения средних баллов каждого магазина
 
-      // Первый этап: вычисляем средний балл каждого магазина
       allStores.forEach(store => {
         let storeScore = 0
         let validWeeks = 0
@@ -706,19 +692,16 @@ const processedData = computed(() => {
         totalScore += storeScore
       })
 
-      // Второй этап: вычисляем общий средний балл всех магазинов
       const overallAverageScore = storeAverages.length > 0
         ? storeAverages.reduce((sum, score) => sum + score, 0) / storeAverages.length
         : 0
 
-      // Третий этап: определяем пороговое значение (средний балл минус 30%)
       const thresholdScore = overallAverageScore * 0.7 // 70% от среднего = средний минус 30%
 
       console.log(`Метрика: ${key}`)
       console.log(`Общий средний балл: ${overallAverageScore.toFixed(2)}`)
       console.log(`Пороговое значение (70% от среднего): ${thresholdScore.toFixed(2)}`)
 
-      // Четвертый этап: классифицируем магазины
       storeAverages.forEach((averageStoreScore, index) => {
         console.log(`Магазин ${allStores[index].id}: средний балл ${averageStoreScore.toFixed(2)}`)
 
@@ -3188,9 +3171,9 @@ onUnmounted(() => {
   transition: transform 0.4s ease;
 }
 
-.odx-hiden_cell {
-  font-size: 11px !important;
-}
+// .odx-hiden_cell {
+//   font-size: 11px !important;
+// }
 
 .odx-tooltip__detail {
   display: flex;
