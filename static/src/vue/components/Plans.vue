@@ -26,7 +26,7 @@
     <div v-else class="plans-content">
       <!-- Загальні налаштування показників -->
       <div class="plans-section">
-        <h3>📊 Налаштування основних балів</h3>
+        <h3>Налаштування основних балів</h3>
         <div class="targets-grid">
           <div 
             v-for="(target, key) in targetsData.targetTree" 
@@ -63,7 +63,7 @@
           <input 
             type="text" 
             v-model="searchStore" 
-            placeholder="🔍 Пошук магазину..."
+            placeholder="Пошук магазину..."
             class="search-input"
           >
           <select v-model="selectedTarget" class="target-filter">

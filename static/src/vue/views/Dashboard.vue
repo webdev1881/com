@@ -402,10 +402,10 @@ const loadData = async () => {
     loading.value = true
     error.value = null
     const [salesResponse, targetsResponse] = await Promise.all([
-      fetch('/com/static/data/real-data.json'),
+      // fetch('/com/static/data/real-data.json'), 
+      fetch('/com/static/data/output.json'),
       fetch('/com/static/data/targets.json')
-    ])
-
+    ]) 
 
     if (!salesResponse.ok || !targetsResponse.ok) {
       throw new Error(`HTTP error! status: ${salesResponse.status || targetsResponse.status}`)
@@ -440,11 +440,11 @@ const loadData = async () => {
   } finally {
     setTimeout(() => {
       loading.value = false
-    }, 400)
+    }, 40)
   }
 }
-
-
+ 
+ 
 
 // Функция получения сохраненных данных из localStorage
 const getSavedTargetsFromMemory = () => {
@@ -490,10 +490,6 @@ const handlePlansDataUpdate = (event) => {
 const togglePlansEditor = () => {
   showPlansEditor.value = !showPlansEditor.value
 }
-
-
-
-
 
 
 const togglePanel = () => { isOpen.value = !isOpen.value }
@@ -916,8 +912,8 @@ const changeColor = (color) => { selectedColor.value = color }
 const togglePalette = () => { isPaletteOpen.value = !isPaletteOpen.value }
 const closePalette = () => { isPaletteOpen.value = false }
 
-const regionSortBy = ref({ weekId: 'week_1', columnKey: 'totalScore', direction: 'desc' })
-const storeSortBy = ref({ weekId: 'week_1', columnKey: 'totalScore', direction: 'desc' })
+const regionSortBy = ref({ weekId: 'period_2', columnKey: 'totalScore', direction: 'desc' })
+const storeSortBy = ref({ weekId: 'period_2', columnKey: 'totalScore', direction: 'desc' })
 
 const indicatorGroups = computed(() => {
   const groups = [
@@ -926,7 +922,7 @@ const indicatorGroups = computed(() => {
       label: 'Заг. бал',
       indicators: [{ key: 'totalScore', label: `${planScore.value}` }]
     }
-  ]
+  ] 
 
   if (targetsData.value?.targetTree) {
     Object.entries(targetsData.value.targetTree).forEach(([key, target]) => {
@@ -1314,7 +1310,7 @@ const calculateOverallScores = (allStores) => {
 
 const weeks = computed(() => {
   if (!salesData.value?.weeks) return []
-  return [...salesData.value.weeks].sort((a, b) => b.id - a.id)
+  return [...salesData.value.weeks].sort((a, b) => a.id - b.id)
 })
 
 const calculateColumnRanks = (weekId, allStores) => {
@@ -1354,7 +1350,7 @@ const calculateColumnRanks = (weekId, allStores) => {
       item.weekData.columnRanks[indicator] = index + 1
     })
   })
-}
+} 
 
 const calculateRegionColumnRanks = () => {
   if (!regions.value || !salesData.value) return
@@ -2056,7 +2052,7 @@ onUnmounted(() => {
       will-change: transform;
 
       &--static {
-        min-width: 230px;
+        min-width: 245px;
         flex-shrink: 0;
         // background: var(--odx-neutral);
         font-weight: 600;
@@ -2292,7 +2288,7 @@ onUnmounted(() => {
     }
 
     &__static {
-      min-width: 230px;
+      min-width: 245px;
       flex-shrink: 0;
       padding: 4px 8px;
       font-size: 12px;
@@ -3028,9 +3024,9 @@ onUnmounted(() => {
     }
 
     .odx-table__cell--static {
-      min-width: 230px;
+      min-width: 245px;
     }
-  }
+  } 
 
   .odx-plans-toggle {
     position: fixed !important;

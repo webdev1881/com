@@ -10,11 +10,6 @@ _logger = logging.getLogger(__name__)
 
 
 class VueController(http.Controller):
-    """
-    Контроллер для Vue.js интеграции
-    Предоставляет API для взаимодействия Vue приложения с Odoo
-    """
-    
     @http.route('/vue/api/data', type='json', auth='user', methods=['POST'])
     def get_vue_data(self, model=None, domain=None, fields=None, limit=50, **kwargs):
         """Универсальный API для получения данных из Odoo"""
@@ -27,15 +22,11 @@ class VueController(http.Controller):
             
             if not domain:
                 domain = []
-            
-            # Проверяем права доступа
             if not request.env[model].check_access_rights('read', raise_exception=False):
                 return {
                     'success': False,
                     'error': 'Недостаточно прав для чтения модели ' + model
                 }
-            
-            # Получаем данные
             records = request.env[model].search_read(
                 domain, fields, limit=limit
             )
@@ -63,14 +54,12 @@ class VueController(http.Controller):
                     'error': 'Не указана модель или значения'
                 }
             
-            # Проверяем права
             if not request.env[model].check_access_rights('create', raise_exception=False):
                 return {
                     'success': False,
                     'error': 'Недостаточно прав для создания записи'
                 }
             
-            # Создаем запись
             record = request.env[model].create(values)
             
             return {

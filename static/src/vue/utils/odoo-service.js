@@ -1,6 +1,3 @@
-/**
- * Сервис для взаимодействия с Odoo API
- */
 
 class OdooService {
   constructor() {

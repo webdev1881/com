@@ -15,7 +15,7 @@ const routes = [
     path: '/dashboard', 
     component: Dashboard,  
     name: 'Dashboard',
-    meta: { title: 'Аналитика продаж', icon: '📊' }
+    meta: { title: 'Компас', icon: '📊' }
   },
   { 
     path: '/plans', 
@@ -66,8 +66,7 @@ router.onError((error) => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Vue.js integration для Odoo готов')
-  console.log('🚀 Основной компонент: Dashboard (аналитика), дополнительные: Plans (настройки)')
+
 })
 
 export { router }
