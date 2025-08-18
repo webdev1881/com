@@ -6,6 +6,19 @@
         <button @click="resetToDefaults" class="btn btn-secondary">
           Скинути
         </button>
+        <button @click="downloadTemplate" class="btn btn-info">
+          Шаблон Excel
+        </button>
+        <label class="btn btn-upload">
+          Завантажити Excel
+          <input 
+            type="file" 
+            ref="fileInput"
+            @change="handleFileUpload" 
+            accept=".xlsx,.xls" 
+            style="display: none;"
+          >
+        </label>
         <button @click="saveChanges" class="btn btn-primary" :disabled="!hasChanges">
           Зберегти
         </button>
@@ -24,7 +37,6 @@
     </div>
 
     <div v-else class="plans-content">
-      <!-- Загальні налаштування показників -->
       <div class="plans-section">
         <h3>📊 Налаштування основних балів</h3>
         <div class="targets-grid">
@@ -55,7 +67,6 @@
         </div>
       </div>
 
-      <!-- Налаштування за магазинами -->
       <div class="plans-section">
         <h3>Цільові Показники по Магазинам</h3>
         
@@ -166,14 +177,48 @@
       </div>
     </div>
 
-    <!-- Модальне вікно підтвердження -->
     <div v-if="showConfirmModal" class="modal-overlay" @click="cancelReset">
       <div class="modal" @click.stop>
-        <h3>🔄 Повернутися до налаштувань за замовчуванням</h3>
+        <h3>Повернутися до налаштувань за замовчуванням</h3>
         <p>Ви впевнені, що хочете скинути всі зміни і повернутися до налаштувань за замовчуванням?</p>
         <div class="modal-actions">
           <button @click="cancelReset" class="btn btn-secondary">Скасувати</button>
           <button @click="confirmReset" class="btn btn-danger">Скинути</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showUploadModal" class="modal-overlay">
+      <div class="modal upload-modal" @click.stop>
+        <h3>Завантаження Excel файлу</h3>
+        <div class="upload-progress">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              :style="{ width: uploadProgress + '%' }"
+            ></div>
+          </div>
+          <div class="progress-text">
+            {{ uploadProgress }}% завершено
+          </div>
+        </div>
+        <div class="upload-stages">
+          <div class="stage" :class="{ 'stage-active': uploadProgress >= 20 }">
+            <span class="stage-icon">📁</span>
+            <span>Читання файлу</span>
+          </div>
+          <div class="stage" :class="{ 'stage-active': uploadProgress >= 40 }">
+            <span class="stage-icon">🔍</span>
+            <span>Парсинг даних</span>
+          </div>
+          <div class="stage" :class="{ 'stage-active': uploadProgress >= 80 }">
+            <span class="stage-icon">✅</span>
+            <span>Валідація</span>
+          </div>
+          <div class="stage" :class="{ 'stage-active': uploadProgress >= 100 }">
+            <span class="stage-icon">💾</span>
+            <span>Застосування</span>
+          </div>
         </div>
       </div>
     </div>
@@ -182,6 +227,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import * as XLSX from 'xlsx'
 
 const emit = defineEmits(['close'])
 
@@ -197,6 +243,9 @@ const searchStore = ref('')
 const selectedTarget = ref('')
 const bulkValues = ref({})
 const showConfirmModal = ref(false)
+const fileInput = ref(null)
+const uploadProgress = ref(0)
+const showUploadModal = ref(false)
 
 const filteredObj = computed(() => {
   return Object.fromEntries(
@@ -419,6 +468,329 @@ const showNotification = (message, type = 'info') => {
   }, 3000)
 }
 
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  try {
+    showUploadModal.value = true
+    uploadProgress.value = 0
+    
+    if (!file.name.match(/\.(xlsx|xls)$/i)) {
+      throw new Error('Неподдерживаемый формат файла. Используйте .xlsx или .xls')
+    }
+
+    uploadProgress.value = 20
+
+    const arrayBuffer = await file.arrayBuffer()
+    uploadProgress.value = 40
+
+
+    const workbook = XLSX.read(arrayBuffer, {
+      type: 'array',
+      cellDates: true,
+      cellNF: true,
+      cellText: false
+    })
+
+    uploadProgress.value = 60
+
+    const parsedData = parseExcelData(workbook)
+    uploadProgress.value = 80
+
+    const validatedData = validateExcelData(parsedData)
+    uploadProgress.value = 90
+
+    await applyExcelData(validatedData)
+    uploadProgress.value = 100
+
+    console.log('✅ Файл успешно обработан')
+    showNotification('Excel файл успешно загружен!', 'success')
+
+  } catch (error) {
+    console.error('❌ Ошибка обработки Excel файла:', error)
+    showNotification(`Ошибка: ${error.message}`, 'error')
+  } finally {
+
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+    
+    setTimeout(() => {
+      showUploadModal.value = false
+      uploadProgress.value = 0
+    }, 1000)
+  }
+}
+
+const parseExcelData = (workbook) => {
+  const result = {
+    targetTree: {},
+    storeTargets: {}
+  }
+
+  if (workbook.SheetNames.includes('Настройки показателей')) {
+    const settingsSheet = workbook.Sheets['Настройки показателей']
+    const settingsData = XLSX.utils.sheet_to_json(settingsSheet, { header: 1 })
+    
+    for (let i = 1; i < settingsData.length; i++) {
+      const row = settingsData[i]
+      if (row[0] && row[1] && row[2] && row[3]) {
+        const key = row[0].toString() // Оставляем ключ как есть
+        result.targetTree[key] = {
+          name: row[1],
+          maxScore: Number(row[2]) || 100,
+          type: row[3].toString().toLowerCase() === 'negative' ? 'negative' : 'positive'
+        }
+      }
+    }
+  }
+
+  if (workbook.SheetNames.includes('Цели по магазинам')) {
+    const targetsSheet = workbook.Sheets['Цели по магазинам']
+    const targetsData = XLSX.utils.sheet_to_json(targetsSheet, { header: 1 })
+    
+    if (targetsData.length < 2) {
+      throw new Error('Лист "Цели по магазинам" пуст или некорректный')
+    }
+    
+    const headers = targetsData[0]
+    console.log('🔍 Заголовки Excel:', headers)
+
+    const nameToKeyMapping = {
+      'Списання': 'losses',
+      'Нестачі': 'shortages', 
+      'ФОП': 'fop',
+      'Повернення': 'shiftRemainder',
+      'Непровед.': 'unprocessed',
+      'Непровед. списання': 'unprocessed'
+    }
+    
+    const targetKeys = []
+    for (let j = 1; j < headers.length - 1; j++) {
+      const headerName = headers[j]
+      if (headerName) {
+        let key = null
+        for (const [name, keyValue] of Object.entries(nameToKeyMapping)) {
+          if (headerName.includes(name)) {
+            key = keyValue
+            break
+          }
+        }
+        
+        if (!key) {
+          for (const [treeKey, treeValue] of Object.entries(targetsData.value.targetTree)) {
+            if (headerName.includes(treeValue.name) || treeValue.name.includes(headerName)) {
+              key = treeKey
+              break
+            }
+          }
+        }
+        
+        if (key) {
+          targetKeys.push(key)
+        } else {
+          console.warn(`⚠️ Не найден ключ для колонки: ${headerName}`)
+        }
+      }
+    }
+    
+    console.log('🔑 Ключи показателей:', targetKeys)
+    
+    for (let i = 1; i < targetsData.length; i++) {
+      const row = targetsData[i]
+      if (row[0]) {
+        const storeId = row[0].toString()
+        const storeName = row[row.length - 1] // Последняя колонка - название
+        
+        result.storeTargets[storeId] = {
+          store: storeName || `Магазин ${storeId}`
+        }
+        
+        for (let j = 0; j < targetKeys.length; j++) {
+          const key = targetKeys[j]
+          const value = Number(row[j + 1])
+          if (!isNaN(value)) {
+            result.storeTargets[storeId][key] = value
+          } else {
+            console.warn(`⚠️ Некорректное значение для магазина ${storeId}, показатель ${key}: ${row[j + 1]}`)
+          }
+        }
+      }
+    }
+  }
+
+  console.log('📋 Парсинг завершен:', {
+    targetTree: Object.keys(result.targetTree).length,
+    storeTargets: Object.keys(result.storeTargets).length
+  })
+  
+  return result
+}
+
+const validateExcelData = (data) => {
+  const errors = []
+  const warnings = []
+  
+  console.log('🔍 Начинаем валидацию данных...')
+  
+  if (data.targetTree && Object.keys(data.targetTree).length > 0) {
+    Object.keys(data.targetTree).forEach(key => {
+      const target = data.targetTree[key]
+      if (!target.name) {
+        errors.push(`Отсутствует название для показателя: ${key}`)
+      }
+      if (typeof target.maxScore !== 'number' || target.maxScore < 1 || target.maxScore > 500) {
+        errors.push(`Некорректный максимальный балл для ${key}: ${target.maxScore} (должен быть 1-500)`)
+      }
+      if (!['positive', 'negative'].includes(target.type)) {
+        errors.push(`Некорректный тип показателя ${key}: ${target.type} (должен быть positive или negative)`)
+      }
+    })
+    console.log(`✅ Проверены настройки ${Object.keys(data.targetTree).length} показателей`)
+  }
+  
+  if (!data.storeTargets || Object.keys(data.storeTargets).length === 0) {
+    errors.push('Не найдены цели по магазинам в листе "Цели по магазинам"')
+  } else {
+    Object.keys(data.storeTargets).forEach(storeId => {
+      const storeData = data.storeTargets[storeId]
+
+      Object.keys(storeData).forEach(targetKey => {
+        if (targetKey === 'store') return
+        
+        const value = storeData[targetKey]
+        
+        if (typeof value !== 'number' || isNaN(value)) {
+          errors.push(`Нечисловое значение для магазина ${storeId}, показатель ${targetKey}: "${value}"`)
+          return
+        }
+        
+        const maxValue = targetKey === 'unprocessed' ? 10 : 1
+        if (value < 0) {
+          errors.push(`Отрицательное значение для магазина ${storeId}, показатель ${targetKey}: ${value}`)
+        } else if (value > maxValue) {
+          if (value > maxValue * 10) {
+            errors.push(`Слишком большое значение для магазина ${storeId}, показатель ${targetKey}: ${value} (максимум: ${maxValue * 10})`)
+          } else {
+            warnings.push(`Большое значение для магазина ${storeId}, показатель ${targetKey}: ${value} (обычно до ${maxValue})`)
+          }
+        }
+      })
+    })
+    
+    console.log(`✅ Проверены данные ${Object.keys(data.storeTargets).length} магазинов`)
+  }
+  
+  if (warnings.length > 0) {
+    console.warn('⚠️ Предупреждения:')
+    warnings.forEach(warning => console.warn(warning))
+  }
+
+  if (errors.length > 0) {
+    const errorMessage = 'Ошибки валидации:\n' + errors.join('\n')
+    if (warnings.length > 0) {
+      errorMessage += '\n\nПредупреждения:\n' + warnings.join('\n')
+    }
+    throw new Error(errorMessage)
+  }
+  
+  console.log('✅ Валидация завершена успешно')
+  return data
+}
+
+const applyExcelData = async (data) => {
+  const backup = JSON.parse(JSON.stringify(targetsData.value))
+  
+  try {
+    console.log('💾 Применяем данные из Excel...')
+    console.log('📄 Новые данные:', data)
+    
+    if (data.targetTree && Object.keys(data.targetTree).length > 0) {
+      Object.assign(targetsData.value.targetTree, data.targetTree)
+      console.log('✅ Обновлены настройки показателей')
+    }
+    
+    if (data.storeTargets && Object.keys(data.storeTargets).length > 0) {
+      console.log('🏢 Старые магазины:', Object.keys(targetsData.value.storeTargets))
+      console.log('🏢 Новые магазины:', Object.keys(data.storeTargets))
+      
+      targetsData.value.storeTargets = { ...data.storeTargets }
+      
+      console.log('✅ Магазины полностью заменены')
+      console.log('🏢 Результат:', Object.keys(targetsData.value.storeTargets))
+    }
+
+    initBulkValues()
+
+    markAsChanged()
+
+    emitDataUpdate()
+    
+    console.log('✅ Данные из Excel успешно применены')
+  } catch (error) {
+    console.error('❌ Ошибка применения данных:', error)
+    targetsData.value = backup
+    throw error
+  }
+}
+
+const downloadTemplate = () => {
+  try {
+    const workbook = XLSX.utils.book_new()
+  
+    const settingsData = [['Ключ', 'Название', 'Макс. балл', 'Тип', 'Описание']]
+    
+    Object.keys(targetsData.value.targetTree).forEach(key => {
+      const target = targetsData.value.targetTree[key]
+      settingsData.push([
+        key,
+        target.name,
+        target.maxScore,
+        target.type,
+        `Показатель: ${target.name}`
+      ])
+    })
+    
+    const settingsSheet = XLSX.utils.aoa_to_sheet(settingsData)
+    XLSX.utils.book_append_sheet(workbook, settingsSheet, 'Настройки показателей')
+    
+    const currentStores = targetsData.value.storeTargets
+    const storeIds = Object.keys(currentStores)
+    
+    const indicators = Object.keys(targetsData.value.targetTree)
+      .filter(key => key !== 'turnover')
+    
+    const targetsHeaders = ['ID Магазина', ...indicators.map(key => targetsData.value.targetTree[key].name), 'Название магазина']
+    const targetsData_array = [targetsHeaders]
+    
+    storeIds.forEach(storeId => {
+      const storeData = currentStores[storeId]
+      const row = [
+        storeId, 
+        ...indicators.map(key => storeData[key] || 0), 
+        storeData.store || `Магазин ${storeId}`
+      ]
+      targetsData_array.push(row)
+    })
+    
+    const targetsSheet = XLSX.utils.aoa_to_sheet(targetsData_array)
+    XLSX.utils.book_append_sheet(workbook, targetsSheet, 'Цели по магазинам')
+    
+    const fileName = `Шаблон_планов_SMK_${new Date().toISOString().slice(0,10)}.xlsx`
+    XLSX.writeFile(workbook, fileName)
+    
+    console.log(`📥 Шаблон Excel скачан: ${fileName} (${storeIds.length} магазинов)`)
+    showNotification(`Шаблон Excel скачан! ${storeIds.length} магазинов`, 'info')
+    
+  } catch (error) {
+    console.error('❌ Ошибка создания шаблона:', error)
+    showNotification('Ошибка создания шаблона!', 'error')
+  }
+}
+
+
 const handleKeydown = (event) => {
   if (event.ctrlKey && event.key === 's') {
     event.preventDefault()
@@ -525,6 +897,29 @@ onUnmounted(() => {
 .btn-close:hover {
   background: #e2e8f0;
   color: #475569;
+}
+
+.btn-info {
+  background: #06b6d4;
+  color: white;
+}
+
+.btn-info:hover {
+  background: #0891b2;
+  transform: translateY(-1px);
+}
+
+.btn-upload {
+  background: #10b981;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-upload:hover {
+  background: #059669;
+  transform: translateY(-1px);
 }
 
 .btn-small {
@@ -949,6 +1344,128 @@ onUnmounted(() => {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* ==== EXCEL UPLOAD STYLES ==== */
+
+.upload-modal {
+  max-width: 500px;
+  min-height: 300px;
+}
+
+.upload-progress {
+  margin: 20px 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: 12px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 16px;
+}
+
+.upload-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+  opacity: 0.5;
+}
+
+.stage-active {
+  background: #f0f9ff;
+  border-color: #3b82f6;
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.stage-icon {
+  font-size: 18px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.stage span:last-child {
+  font-weight: 600;
+  color: #374151;
+}
+
+.stage-active span:last-child {
+  color: #1e40af;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+  .upload-modal {
+    max-width: 95%;
+    margin: 20px;
+  }
+  
+  .stage {
+    padding: 8px 12px;
+  }
+  
+  .stage-icon {
+    font-size: 16px;
+  }
+  
+  .stage span:last-child {
+    font-size: 14px;
   }
 }
 </style>

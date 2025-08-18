@@ -10,7 +10,7 @@
         <div class="odx-color-palette__grid">
           <div v-for="color in darkColors" :key="color" class="odx-color-option"
             :class="{ 'odx-color-option--selected': selectedColor === color }" :style="{ backgroundColor: color }"
-            @click="changeColor(color)" :title="color" />
+            @click="changeColor(color)" :title="color"/>
         </div>
         <div class="odx-format-controls">
           <label class="odx-toggle">
@@ -72,9 +72,9 @@
               <div class="odx-table__cell odx-table__cell--static"></div>
               <div v-for="week in weeks" :key="week.id" class="odx-week">
                 <div class="odx-week__groups">
-                  <div v-for="group in visibleGroups" :key="group.key"
+                  <div v-for="group in visibleGroups" :key="group.key"  @mouseover="hoverColor" 
                     class="odx-table__cell odx-table__cell--group-header" :style="getGroupStyle(group.key)">
-                    <div @click="toggleGroupVisibility(group.key)" class="odx-group-toggle">
+                    <div @click="toggleGroupVisibility(group.key)" class="odx-group-toggle"  @mouseover="hoverColor" >
                       <span>{{ group.label }}</span>
                     </div>
                   </div>
@@ -279,7 +279,7 @@
                   <div v-for="val in (processedData.belowPlanStores)" class="odx-tip_tooltext_item">
                     <div class="item">{{ val.name }}</div>
                     <div class="item">{{ ((val.weeklyData[0].fact + val.weeklyData[1].fact) / (val.weeklyData[0].plan +
-                      val.weeklyData[1].plan)*100).toFixed(1) }}%</div>
+                      val.weeklyData[1].plan) * 100).toFixed(1) }}%</div>
                   </div>
                 </div>
 
@@ -950,6 +950,9 @@ const darkenColor = (color, percent = 20) => {
   return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
     (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
     (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)
+}
+const hoverColor = () => {
+  return 'style="background-color: ' + darkenColor(selectedColor.value, 10) + '!important;"'
 }
 
 const headerStyle = computed(() => ({
@@ -2027,7 +2030,7 @@ onUnmounted(() => {
 
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 999;
       // background: var(--odx-surface);
       border-bottom: 2px solid var(--odx-border);
     }
@@ -2057,45 +2060,6 @@ onUnmounted(() => {
         }
       }
 
-      // &--region {
-      //   background: var(--odx-neutral);
-      //   font-weight: 600;
-      //   border-bottom: 2px solid var(--odx-border);
-      // }
-
-      // &--store {
-      //   background: var(--odx-surface);
-      // }
-
-      // &--top-rank {
-      //   background: #ecfdf5;
-      //   border-left: 4px solid var(--odx-success);
-      // }
-
-      // &--mid-rank {
-      //   background: #fffbeb;
-      //   border-left: 4px solid var(--odx-warning);
-      // }
-
-      // &--low-rank {
-      //   background: #fef2f2;
-      //   border-left: 4px solid var(--odx-danger);
-      // }
-
-      // &--region-top {
-      //   background: #ecfdf5;
-      //   border-left: 6px solid var(--odx-success);
-      // }
-
-      // &--region-mid {
-      //   background: #fffbeb;
-      //   border-left: 6px solid var(--odx-warning);
-      // }
-
-      // &--region-low {
-      //   background: #fef2f2;
-      //   border-left: 6px solid var(--odx-danger);
-      // }
     }
 
     &__cell {
@@ -2116,7 +2080,6 @@ onUnmounted(() => {
       &--static {
         min-width: 230px;
         flex-shrink: 0;
-        // background: var(--odx-neutral);
         font-weight: 600;
         border-right: 2px solid var(--odx-border);
         justify-content: flex-start;
@@ -2124,34 +2087,26 @@ onUnmounted(() => {
       }
 
       &--group {
-        // background: #eef2ff;
-        // color: var(--odx-info);
         font-size: 15px;
         font-weight: 700;
-        // border-bottom: 2px solid var(--odx-info);
         border-bottom: 1px solid var(--odx-border);
       }
 
       &--group-header {
-        // background: var(--odx-surface);
         font-size: 13px;
-        // color: var(--odx-text-muted);
         cursor: pointer;
 
         &:hover {
-          background: #0d598a;
-          // color: white;
+          background-color: rgba(0, 0, 0, 0.2);
         }
       }
 
       &--metric {
-        // background: var(--odx-surface);
         font-size: 12px;
-        // color: var(--odx-text-muted);
         cursor: pointer;
 
         &:hover {
-          background: #0d598a;
+          background-color: rgba(0, 0, 0, 0.2);
           color: white;
         }
       }
@@ -3201,7 +3156,6 @@ onUnmounted(() => {
   border-radius: 6px;
   padding: 5px 8px;
   font-size: 12px;
-
   /* Position the tooltip */
   position: absolute;
   right: -10px;
