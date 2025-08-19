@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="smk_compass_form" model="ir.ui.view">
+        <field name="name">smk.compass.form</field>
+        <field name="model">smk.compass</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="week_number"/>
+                            <field name="week_start"/>
+                            <field name="week_end"/>
+                        </group>
+                        <group>
+                            <field name="shop_id"/>
+                            <field name="plan"/>
+                            <field name="fact"/>
+                            <field name="losses"/>
+                            <field name="shortages"/>
+                            <field name="fop"/>
+                            <field name="shiftRemainder"/>
+                            <field name="unprocessed"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_smk_compass_list" model="ir.ui.view">
+        <field name="model">smk.compass</field>
+        <field name="arch" type="xml">
+            <list string="Данные">
+                <field name="shop_id"/>
+                <field name="week_number"/>
+                <field name="week_start"/>
+                <field name="week_end"/>
+                <field name="plan"/>
+                <field name="fact"/>
+                <field name="losses"/>
+                <field name="shortages"/>
+                <field name="fop"/>
+                <field name="shiftRemainder"/>
+                <field name="unprocessed"/>
+            </list>
+        </field>
+    </record>
+</odoo>

@@ -13,6 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/main_menu.xml',
+        'views/compass_view.xml',
     ],
     'assets': {
         'web.assets_backend': [
