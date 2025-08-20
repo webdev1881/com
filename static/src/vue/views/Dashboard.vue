@@ -1,5 +1,40 @@
 <template>
   <div class="odx-sales-dashboard">
+
+    <div class="odx-controls">
+        <div class="period-buttons">
+          <button 
+            @click="loadData()"
+            :class="{ active: selectedPeriod === 'Місяць' }"
+            :disabled="loading || selectedPeriod === 'Місяць'"
+            class="period-btn"
+          >
+            {{ 'Місяць' }}
+          </button>
+          <button 
+            @click="loadData2()"
+            :class="{ active: selectedPeriod === 'Неділя' }"
+            :disabled="loading || selectedPeriod === 'Неділя'"
+            class="period-btn"
+          >
+            {{ 'Неділя' }}
+          </button>
+        </div>
+        <div :style="headerStyle" class="odx-controls__refresh" @click="refreshData" :disabled="loading">
+          Оновити
+        </div>
+        <div class="tooltip-controls">
+          <label class="tooltip-toggle">
+            <input type="checkbox" v-model="tooltipEnabled" />
+            <span class="toggle-slider" ></span>
+            <span class="toggle-label">Деталі</span>
+          </label>
+        </div>
+      </div>
+
+
+
+
     <img :class="{ 'odx-palette-toggle--active': isPaletteOpen }" class="odx-palette-toggle" @click="togglePalette"
       src="https://toppng.com/uploads/preview/the-icon-is-shaped-like-an-oval-that-slightly-resembles-paint-palette-icon-11553394861oazcgcebd1.png"
       alt="Palette">
@@ -28,8 +63,6 @@
       <div class="odx-loading__progress"></div>
     </div>
 
-
-    <!-- Компонент редактора планов -->
     <div v-if="showPlansEditor" class="odx-plans-overlay">
       <div class="odx-plans-container">
         <Plans @close="showPlansEditor = false" />
@@ -43,25 +76,13 @@
     </div>
 
     <div v-if="!loading && !error" class="odx-dashboard">
-      <div class="odx-controls">
-        <div :style="headerStyle" class="odx-controls__refresh" @click="refreshData" :disabled="loading">
-          Оновити
-        </div>
-        <div class="tooltip-controls">
-          <label class="tooltip-toggle">
-            <input type="checkbox" v-model="tooltipEnabled" />
-            <span class="toggle-slider" :style="headerStyle"></span>
-            <span class="toggle-label">Деталі</span>
-          </label>
-        </div>
-      </div>
 
       <div class="odx-table-container">
         <div class="odx-table">
           <div class="odx-table__header" :style="headerStyle">
             <div class="odx-table__row odx-table__row--header-top">
-              <div class="odx-table__cell odx-table__cell--static">Регіон / Магазин</div>
-              <div class="odx-table__cell odx-table__cell--group" :style="{ width: dynamicRowWidth }">
+              <div class="odx-table__cell odx-table__cell--static odx_top">Регіон / Магазин</div>
+              <div class="odx-table__cell odx-table__cell--group odx_top" :style="{ width: dynamicRowWidth }">
                 <div v-for="week in weeks" :key="week.id" class="odx-week">
                   <div class="odx-week__name">{{ week.name }} {{ week.dateRange }}</div>
                 </div>
@@ -72,8 +93,10 @@
               <div class="odx-table__cell odx-table__cell--static"></div>
               <div v-for="week in weeks" :key="week.id" class="odx-week">
                 <div class="odx-week__groups">
-                  <div v-for="group in visibleGroups" :key="group.key"  @mouseover="hoverColor" 
-                    class="odx-table__cell odx-table__cell--group-header" :style="getGroupStyle(group.key)">
+                  <div v-for="(group, index) in visibleGroups" :key="group.key"  @mouseover="hoverColor" 
+                    class="odx-table__cell odx-table__cell--group-header" :style="getGroupStyle(group.key)"
+                     :class="{odx_right: index === visibleGroups.length - 1 }"
+                    >
                     <div @click="toggleGroupVisibility(group.key)" class="odx-group-toggle"  @mouseover="hoverColor" >
                       <span>{{ group.label }}</span>
                     </div>
@@ -84,9 +107,10 @@
 
             <div class="odx-table__row odx-table__row--header-bottom">
               <div class="odx-table__cell odx-table__cell--static"></div>
-              <div v-for="week in weeks" :key="week.id" class="odx-week">
+              <div v-for="(week, index) in weeks" :key="week.id" class="odx-week">
                 <div class="odx-week__columns">
-                  <div v-for="indicator in availableIndicators" :key="indicator.key"
+                  <div v-for="(indicator, index) in availableIndicators" :key="indicator.key"
+                     :class="{odx_right: index === availableIndicators.length - 1 }"
                     class="odx-table__cell odx-table__cell--metric" :style="getStyle(indicator.key)"
                     @click="handleRegionSort(week.id, indicator.key)">
                     <div class="odx-metric-header">
@@ -118,7 +142,7 @@
                       <div class="odx-week__columns">
                         <div v-for="indicator in availableIndicators"
                           :key="`region-${region.id}-${week.id}-${indicator.key}`"
-                          class="odx-table__cell odx-table__cell--data odx-tooltip-trigger odx-hiden_cell"
+                          class="odx-table__cell odx-table__cell--data odx-tooltip-trigger "
                           :class="getRegionCellClass(indicator.key, region, week.id)" :style="getStyle(indicator.key)"
                           @mouseenter="showTooltip($event, region, 'region', week.id, indicator.key)"
                           @mouseleave="hideTooltip" @mousemove="updateTooltipPosition">
@@ -176,6 +200,7 @@
                           :style="getStyle(indicator.key)"
                           @mouseenter="showTooltip($event, store, 'store', week.id, indicator.key)"
                           @mouseleave="hideTooltip" @mousemove="updateTooltipPosition">
+                          <!-- {{ indicator }} -->
                           {{ getStoreData(store, week.id, indicator.key) }}
                         </div>
                       </div>
@@ -196,7 +221,7 @@
       <div v-if="isOpen" class="kpi-overlay" @click="closePanel"></div>
       <div class="kpi-sidebar" :class="{ 'kpi-sidebar--open': isOpen }">
         <div class="kpi-header">
-          <h2>📊 Ключові показники</h2>
+          <h2>📊 Ключові показники (сума періодів)</h2>
           <button @click="closePanel" class="close-btn" title="Закрыть">✕</button>
         </div>
 
@@ -377,7 +402,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, reactive, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, reactive, nextTick, watch, Transition } from 'vue'
 import Plans from '../components/Plans.vue'
 
 const loading = ref(true)
@@ -387,7 +412,7 @@ const targetsData = ref(null)
 const sortByTotalScore = ref(true)
 const regions = ref([])
 const tooltipEnabled = ref(true)
-const formatter = ref(false)
+const formatter = ref(true)
 const KPITopStores = ref(5)
 const isOpen = ref(false)
 const planScore = ref(0)
@@ -412,46 +437,32 @@ const darkColors = ref([
   '#4e342e', // кофейный
   '#3e2723', // шоколадный
   '#2b2d31'  // нейтральный тёмный
-])
-const selectedColor = ref('#1c699b')
+]) 
+const selectedColor = ref('#e3f2fd')
 const isPaletteOpen = ref(false)
+
+const selectedPeriod = ref('Місяць')
 
 const loadData = async () => {
   try {
     loading.value = true
     error.value = null
+    selectedPeriod.value = 'Місяць'
     const [salesResponse, targetsResponse] = await Promise.all([
       fetch('/com/static/data/output.json'),
       fetch('/com/static/data/targets.json'),
       // fetch('output.json'),
       // fetch('targets.json')
     ])
-
-
-    if (!salesResponse.ok || !targetsResponse.ok) {
-      throw new Error(`HTTP error! status: ${salesResponse.status || targetsResponse.status}`)
-    }
-
-    const [salesDataResult, targetsDataResult] = await Promise.all([
-      salesResponse.json(),
-      targetsResponse.json()
-    ])
-
-    if (!salesDataResult.weeks || !salesDataResult.regions) {
-      throw new Error('Неверная структура данных продаж')
-    }
-
-    if (!targetsDataResult.targetTree || !targetsDataResult.storeTargets) {
-      throw new Error('Неверная структура данных целей')
-    }
-
+    if (!salesResponse.ok || !targetsResponse.ok) {throw new Error(`HTTP error! status: ${salesResponse.status || targetsResponse.status}`)}
+    const [salesDataResult, targetsDataResult] = await Promise.all([salesResponse.json(), targetsResponse.json()])
+    if (!salesDataResult.weeks || !salesDataResult.regions) {throw new Error('Неверная структура данных продаж')}
+    if (!targetsDataResult.targetTree || !targetsDataResult.storeTargets) {throw new Error('Неверная структура данных целей')}
     const savedTargets = getSavedTargetsFromMemory()
-
     salesData.value = salesDataResult
     targetsData.value = savedTargets || targetsDataResult
     dynamicTargetsData.value = targetsData.value
     regions.value = Object.values(salesDataResult.regions)
-
     initializeVisibility()
     processData()
     getSavedColor()
@@ -459,11 +470,36 @@ const loadData = async () => {
   } catch (err) {
     console.error('Ошибка загрузки данных:', err)
     error.value = err.message || 'Ошибка загрузки данных'
-  } finally {
-    setTimeout(() => {
-      loading.value = false
-    }, 400)
-  }
+  } finally {setTimeout(() => {loading.value = false}, 400)}
+}
+const loadData2 = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    selectedPeriod.value = 'Неділя'
+    const [salesResponse, targetsResponse] = await Promise.all([
+      fetch('/com/static/data/output.json'),
+      fetch('/com/static/data/targets.json'),
+      // fetch('output.json'),
+      // fetch('targets.json')
+    ])
+    if (!salesResponse.ok || !targetsResponse.ok) {throw new Error(`HTTP error! status: ${salesResponse.status || targetsResponse.status}`)}
+    const [salesDataResult, targetsDataResult] = await Promise.all([salesResponse.json(), targetsResponse.json()])
+    if (!salesDataResult.weeks || !salesDataResult.regions) {throw new Error('Неверная структура данных продаж')}
+    if (!targetsDataResult.targetTree || !targetsDataResult.storeTargets) {throw new Error('Неверная структура данных целей')}
+    const savedTargets = getSavedTargetsFromMemory()
+    salesData.value = salesDataResult
+    targetsData.value = savedTargets || targetsDataResult
+    dynamicTargetsData.value = targetsData.value
+    regions.value = Object.values(salesDataResult.regions)
+    initializeVisibility()
+    processData()
+    getSavedColor()
+
+  } catch (err) {
+    console.error('Ошибка загрузки данных:', err)
+    error.value = err.message || 'Ошибка загрузки данных'
+  } finally {setTimeout(() => {loading.value = false}, 400)}
 }
 
 const saveColor = (color) => {
@@ -957,8 +993,9 @@ const hoverColor = () => {
 
 const headerStyle = computed(() => ({
   backgroundColor: selectedColor.value,
-  color: '#fff',
+  color: '#0f4478',
   // borderCollapse: 'separate',
+  border: '1px solid #91b6db',
   borderSpacing: 0
 }))
 
@@ -969,8 +1006,8 @@ const changeColor = (color) => {
 const togglePalette = () => { isPaletteOpen.value = !isPaletteOpen.value }
 const closePalette = () => { isPaletteOpen.value = false }
 
-const regionSortBy = ref({ weekId: 'period_1', columnKey: 'totalScore', direction: 'desc' })
-const storeSortBy = ref({ weekId: 'period_1', columnKey: 'totalScore', direction: 'desc' })
+const regionSortBy = ref({ weekId: '1', columnKey: 'totalScore', direction: 'desc' })
+const storeSortBy = ref({ weekId: '1', columnKey: 'totalScore', direction: 'desc' })
 
 const indicatorGroups = computed(() => {
   const groups = [
@@ -1101,24 +1138,26 @@ function getStyle(key) {
 
   return {
     width,
-    transform: isVisible ? 'scaleX(1)' : 'scaleX(0)',
-    willChange: 'transform',
+    transform: isVisible ? 'width:105%' : 'width:0%',
+    // willChange: 'transform',
+    // transition: 'width 0.3s',
     transformOrigin: 'left right',
     fontWeight: key === 'totalScore' ? '700' : 'normal',
-    borderRight: isVisible ? '1px solid #ddd!important' : 'none!important',
+    borderRight: isVisible ? '1px solid #e0e0e0!important' : 'none!important',
   }
 }
 
 function getGroupStyle(groupKey) {
   const group = visibleGroups.value.find(g => g.key === groupKey)
-  if (!group) return { width: '0%', transform: 'scaleX(0)' }
+  if (!group) return { width: '0%', transform: 'width:0%' }
 
   const total = visibleIndicators.value.length
   const groupWidth = group.visibleCount > 0 ? `${(group.visibleCount / total) * 100}%` : '0%'
 
   return {
     width: groupWidth,
-    transform: group.visibleCount > 0 ? 'scaleX(1)' : 'scaleX(0)',
+    transform: group.visibleCount > 0 ? 'width:100%' : 'width:0%',
+    transition: 'width 0.2s',
     willChange: 'transform',
     transformOrigin: 'left right',
     background: group.visibleCount > 1 ? darkenColor(selectedColor.value, 13) : '',
@@ -1376,7 +1415,7 @@ const calculateOverallScores = (allStores) => {
 
 const weeks = computed(() => {
   if (!salesData.value?.weeks) return []
-  return [...salesData.value.weeks].sort((a, b) => b.id - a.id)
+  return [...salesData.value.weeks].sort((a, b) => a.id - b.id)
 })
 
 const calculateColumnRanks = (weekId, allStores) => {
@@ -1660,8 +1699,7 @@ const getCellClass = (indicator, weekData, isRegion = false, weekId = null, regi
 
   if (rank > 0 && totalItems > 0) {
     const percentile = (rank / totalItems) * 100
-    if (indicator.endsWith('_score') || indicator === 'totalScore' ||
-      indicator.endsWith('_percent') || indicator === 'percent') {
+    if (indicator.endsWith('_score') || indicator === 'totalScore') {
 
       if (percentile <= 20) {
         classes.push('odx-table__cell--percentile-top')
@@ -1679,6 +1717,23 @@ const getCellClass = (indicator, weekData, isRegion = false, weekId = null, regi
         classes.push('odx-table__cell--percentile-poor')
         if (formatter.value) { classes.push('odx-table__cell--formatted-poor') }
       }
+    } 
+    if (
+      indicator.endsWith('_percent') || indicator === 'percent') {
+
+      if (percentile <= 20) {
+        classes.push('odx-table__cell--percentile-top')
+      } else if (percentile <= 40) {
+        classes.push('odx-table__cell--percentile-excellent')
+      } else if (percentile <= 60) {
+        classes.push('odx-table__cell--percentile-good')
+      } else if (percentile <= 80) {
+        classes.push('odx-table__cell--percentile-average')
+      } else {
+        classes.push('odx-table__cell--percentile-poor')
+      }
+    }else {
+      classes.push('odx-small')
     }
   }
 
@@ -1741,7 +1796,7 @@ onUnmounted(() => {
   --odx-info: #6366f1;
   --odx-text: #1e293b;
   --odx-text-muted: #64748b;
-  --odx-border: #e2e8f0;
+  --odx-border: #e0e0e0;
   --odx-surface: #ffffff;
   --odx-surface-hover: #f8fafc;
   --odx-neutral: #f1f5f9;
@@ -1845,7 +1900,7 @@ onUnmounted(() => {
     right: 0;
     height: 3px;
     background: var(--odx-border);
-    z-index: 2000;
+    z-index: 2111;
     overflow: hidden;
 
     &__progress {
@@ -1935,11 +1990,11 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 16px 20px;
-    background: var(--odx-surface);
-    border-radius: 8px;
-    border: 1px solid var(--odx-border);
-    margin-bottom: 16px;
+    padding: -1px 20px;
+    // background: var(--odx-surface);
+    // border-radius: 0 0 10px 10px;
+    // border: 1px solid var(--odx-border);
+    margin-top: -1px;
 
     &__refresh {
       display: flex;
@@ -2069,7 +2124,7 @@ onUnmounted(() => {
       align-items: center;
       justify-content: center;
       font-size: 14px;
-      border-right: 1px solid var(--odx-border);
+      // border-right: 1px solid #91b6db;
       text-align: center;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -2081,21 +2136,23 @@ onUnmounted(() => {
         min-width: 230px;
         flex-shrink: 0;
         font-weight: 600;
-        border-right: 2px solid var(--odx-border);
+        border-right: 2px solid #91b6db;
         justify-content: flex-start;
         padding-left: 16px;
+
       }
 
       &--group {
         font-size: 15px;
         font-weight: 700;
-        border-bottom: 1px solid var(--odx-border);
+        border-bottom: 1px solid #91b6db;
+
       }
 
       &--group-header {
         font-size: 13px;
         cursor: pointer;
-
+        border-right: 1px solid #91b6db;
         &:hover {
           background-color: rgba(0, 0, 0, 0.2);
         }
@@ -2104,7 +2161,7 @@ onUnmounted(() => {
       &--metric {
         font-size: 12px;
         cursor: pointer;
-
+        border-right: 1px solid #91b6db;
         &:hover {
           background-color: rgba(0, 0, 0, 0.2);
           color: white;
@@ -2146,6 +2203,7 @@ onUnmounted(() => {
         color: #dc2626;
         font-weight: 600;
       }
+      
 
       &--formatted-top {
         background-color: #d0ffea;
@@ -2189,17 +2247,21 @@ onUnmounted(() => {
   .odx-week {
     display: flex;
     width: 100%;
-    border-right: 2px solid var(--odx-border);
+    border-right: 2px solid #91b6db;
     overflow: hidden;
     border-bottom: 1px solid var(--odx-border);
 
     &__name {
       font-weight: 600;
       // color: var(--odx-info);
-      padding: 12px;
+      padding: 17px;
       text-align: center;
-      font-size: 14px;
+      font-size: 18px;
       margin: 0;
+    }
+
+    &__groups {
+      border-bottom: 1px solid #91b6db;
     }
 
     &__groups,
@@ -2222,15 +2284,19 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    
     width: 100%;
+  }
+  .odx_right {
+    // background-color: red;
+    border-right: none! important;
   }
 
   .odx-sort-arrow {
     margin-left: 5px;
     font-size: 10px;
     opacity: 0.6;
-    transition: all 0.2s ease;
+    // transition: all 0.2s ease;
 
     &--active {
       opacity: 1;
@@ -2358,7 +2424,7 @@ onUnmounted(() => {
     }
 
     &--inactive {
-      opacity: 0.5;
+      opacity: 0;
     }
   }
 
@@ -2405,7 +2471,7 @@ onUnmounted(() => {
   }
 
   .tooltip-toggle input[type="checkbox"]:checked+.toggle-slider {
-    background: red;
+    background: #003268;
   }
 
   .tooltip-toggle input[type="checkbox"]:checked+.toggle-slider::after {
@@ -2438,6 +2504,7 @@ onUnmounted(() => {
     transition: opacity 0.1s ease;
     max-height: 80vh;
     overflow-y: auto;
+    border: 1px solid rgb(69, 54, 79);
 
     &__main {
       font-size: 18px;
@@ -3165,4 +3232,50 @@ onUnmounted(() => {
 .odx-tip_tool:hover .odx-tip_tooltext {
   visibility: visible;
 }
+
+.odx_top {
+  height: 50px!important;
+}
+
+.period-buttons {
+  display: flex;
+  padding: 0 14px;
+  // margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.period-btn {
+  padding: 6px;
+  border: 2px solid #949ea7;
+  background: #949ea7;
+  color: white;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  height: 35px;
+  width: 75px;
+}
+
+.period-btn:hover:not(:disabled) {
+  opacity: 0.8;
+  color: white;
+}
+
+.period-btn.active {
+  background: #003268;
+  border: #003268;
+  color: white;
+}
+
+.period-btn:disabled {
+  // opacity: 0.6;
+  cursor: not-allowed;
+}
+
+// .odx-small {
+//   background-color: red;
+//   font-size: clamp(6px, 0.8vw, 12px);
+//   font-weight: 600;
+// }
 </style>

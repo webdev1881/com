@@ -1,12 +1,12 @@
 {
   "weeks": [
     {
-      "id": "period_1",
+      "id": "1",
       "name": "Липень 2025р.",
       "dateRange": ""
     },
     {
-      "id": "period_2",
+      "id": "2",
       "name": "Червень 2025р.",
       "dateRange": ""
     }
@@ -22,7 +22,7 @@
           "name": "100 БЦ (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 19591959.0,
               "fact": 23351606.63,
               "percent": 1.1918974835543499,
@@ -33,7 +33,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 21379072.0,
               "fact": 22377804.72,
               "percent": 1.046715438350177,
@@ -50,7 +50,7 @@
           "name": "101 БЦ (ЩЕДРИК)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 1938784.0,
               "fact": 2507130.58,
               "percent": 1.293145899697955,
@@ -61,7 +61,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 2100233.0,
               "fact": 2296569.01,
               "percent": 1.0934829659375886,
@@ -78,7 +78,7 @@
           "name": "102 БЦ (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 22755058.0,
               "fact": 17154613.55,
               "percent": 0.7538813370636103,
@@ -89,7 +89,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 6000000.0,
               "fact": 8754757.28,
               "percent": 1.4591262133333331,
@@ -106,7 +106,7 @@
           "name": "87 БЦ (ЩЕДРИК) Грушевского",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 2686986.0,
               "fact": 3261158.66,
               "percent": 1.2136865097175795,
@@ -117,7 +117,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 3232951.0,
               "fact": 3156377.33,
               "percent": 0.9763146209144525,
@@ -141,7 +141,7 @@
           "name": "001 Днепр (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 9091366.0,
               "fact": 8996043.75,
               "percent": 0.9895150794721057,
@@ -152,7 +152,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 8508152.0,
               "fact": 8782254.22,
               "percent": 1.0322164225556856,
@@ -176,7 +176,7 @@
           "name": "108 Киев (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 6743579.0,
               "fact": 6642878.69,
               "percent": 0.9850672306204169,
@@ -187,7 +187,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 6150356.0,
               "fact": 6331291.48,
               "percent": 1.0294187003158841,
@@ -211,7 +211,7 @@
           "name": "199 Первомайский (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 15993683.0,
               "fact": 16522919.58,
               "percent": 1.0330903507340992,
@@ -222,7 +222,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 15306555.0,
               "fact": 15570538.48,
               "percent": 1.017246433309128,
@@ -239,7 +239,7 @@
           "name": "210 Люботин (ЩЕДРИК)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 3868280.0,
               "fact": 4053690.1,
               "percent": 1.047930889180721,
@@ -250,7 +250,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 3762746.0,
               "fact": 3787951.38,
               "percent": 1.0066986663463333,
@@ -267,7 +267,7 @@
           "name": "220 Ольшаны (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 19794522.0,
               "fact": 20005520.42,
               "percent": 1.0106594349689273,
@@ -278,7 +278,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 18026002.0,
               "fact": 19295921.5,
               "percent": 1.0704493153834111,
@@ -295,7 +295,7 @@
           "name": "222 Лозовая (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 21909086.0,
               "fact": 22951289.81,
               "percent": 1.0475694791649455,
@@ -306,7 +306,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 21282486.0,
               "fact": 21928287.18,
               "percent": 1.0303442548957862,
@@ -323,7 +323,7 @@
           "name": "229 Красноград (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 17009357.0,
               "fact": 17127476.36,
               "percent": 1.0069443753811504,
@@ -334,7 +334,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 16421348.0,
               "fact": 16592421.29,
               "percent": 1.0104177373258272,
@@ -351,7 +351,7 @@
           "name": "230 Чугуев (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 24798734.0,
               "fact": 26507855.93,
               "percent": 1.068919725095644,
@@ -362,7 +362,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 24394317.0,
               "fact": 24732366.73,
               "percent": 1.013857724731543,
@@ -379,7 +379,7 @@
           "name": "235 Харьков (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 6856551.0,
               "fact": 6716259.54,
               "percent": 0.9795390627153506,
@@ -390,7 +390,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 7182566.0,
               "fact": 6727481.37,
               "percent": 0.9366403831165631,
@@ -407,7 +407,7 @@
           "name": "240 Богодухов (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 30621195.0,
               "fact": 32052691.81,
               "percent": 1.046748561249814,
@@ -418,7 +418,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 28067946.0,
               "fact": 30236809.89,
               "percent": 1.0772719133063744,
@@ -435,7 +435,7 @@
           "name": "267 Пересичное (РУЛЬКА)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 17188836.0,
               "fact": 17428018.87,
               "percent": 1.013915012627964,
@@ -446,7 +446,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 15369836.0,
               "fact": 16641580.29,
               "percent": 1.0827428666122396,
@@ -463,7 +463,7 @@
           "name": "271 Горького (ЩЕДРИК)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 1219932.0,
               "fact": 1151560.95,
               "percent": 0.9439550319198119,
@@ -474,7 +474,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 1092201.0,
               "fact": 1178225.13,
               "percent": 1.0787621783902412,
@@ -491,7 +491,7 @@
           "name": "282 Максимовка (ЩЕДРИК)",
           "weeklyData": [
             {
-              "weekId": "period_2",
+              "weekId": "2",
               "plan": 3312987.0,
               "fact": 3213559.51,
               "percent": 0.9699885662092848,
@@ -502,7 +502,7 @@
               "unprocessed": 0
             },
             {
-              "weekId": "period_1",
+              "weekId": "1",
               "plan": 2861224.0,
               "fact": 3227731.96,
               "percent": 1.1280948153657315,
