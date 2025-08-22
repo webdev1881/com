@@ -1,16 +1,21 @@
 <template>
   <div class="plans-editor">
     <div class="plans-header">
-      <h2>Редагування Цільових Показників</h2>
+      <div class="header_title">
+        <h2>Редагування Цільових Показників</h2>
+        <button @click="saveChanges" class="btn btn-primary" :disabled="!hasChanges">
+          Зберегти
+        </button>
+      </div>
       <div class="plans-actions">
         <button @click="resetToDefaults" class="btn btn-secondary">
           Скинути
         </button>
-        <button @click="downloadTemplate" class="btn btn-info">
+        <!-- <button @click="downloadTemplate" class="btn btn-info">
           Шаблон Excel
-        </button>
+        </button> -->
         <label class="btn btn-upload">
-          Завантажити Excel
+          Завантажити з Excel
           <input 
             type="file" 
             ref="fileInput"
@@ -19,9 +24,6 @@
             style="display: none;"
           >
         </label>
-        <button @click="saveChanges" class="btn btn-primary" :disabled="!hasChanges">
-          Зберегти
-        </button>
       </div>
     </div>
 
@@ -38,7 +40,7 @@
 
     <div v-else class="plans-content">
       <div class="plans-section">
-        <h3>📊 Налаштування основних балів</h3>
+        <h3>Налаштування основних балів</h3>
         <div class="targets-grid">
           <div 
             v-for="(target, key) in targetsData.targetTree" 
@@ -71,10 +73,11 @@
         <h3>Цільові Показники по Магазинам</h3>
         
         <div class="filters">
+          <img src="../../../icons/srch.png" alt="" class="inp_search">
           <input 
             type="text" 
             v-model="searchStore" 
-            placeholder="🔍 Пошук магазину..."
+            placeholder="Пошук магазину..."
             class="search-input"
           >
           <select v-model="selectedTarget" class="target-filter">
@@ -139,7 +142,7 @@
                 <label>{{ target.name }}:</label>
                 <div class="input-group">
                   <input 
-                    type="number" 
+                    type="number"
                     v-model.number="bulkValues[key]"
                     :step="getInputStep(key)"
                     :min="0"
@@ -153,18 +156,26 @@
               </div>
             </div>
           </div>
-
+          
           <div class="action-group">
-            <h4>Статистика:</h4>
+            <h4>Загальні:</h4>
+            {{ zaglushka }}
             <div class="stats">
               <div class="stat-item">
-                <span class="stat-label">Всього магазинів:</span>
-                <span class="stat-value">{{ Object.keys(targetsData.storeTargets).length }}</span>
+                <span class="stat-label">% заглушка:</span>
+                <div class="bulk-input zaglushka">
+                  <input 
+                    type="number" 
+                    v-model.number="zaglushka"
+                    :step="getZagStep()"
+                    @input="markAsChanged"
+                    :min="100"
+                    :max="1000"
+                    class="bulk-value-input"
+                  >
+                </div>
               </div>
-              <div class="stat-item">
-                <span class="stat-label">Показників:</span>
-                <span class="stat-value">{{ Object.keys(targetsData.targetTree).length }}</span>
-              </div>
+
               <div class="stat-item">
                 <span class="stat-label">Змін:</span>
                 <span class="stat-value" :class="{ 'has-changes': hasChanges }">
@@ -177,19 +188,19 @@
       </div>
     </div>
 
-    <div v-if="showConfirmModal" class="modal-overlay" @click="cancelReset">
-      <div class="modal" @click.stop>
+    <div v-if="showConfirmModal" class="odx_modal-overlay" @click="cancelReset">
+      <div class="odx_modal" @click.stop>
         <h3>Повернутися до налаштувань за замовчуванням</h3>
         <p>Ви впевнені, що хочете скинути всі зміни і повернутися до налаштувань за замовчуванням?</p>
-        <div class="modal-actions">
+        <div class="odx_modal-actions">
           <button @click="cancelReset" class="btn btn-secondary">Скасувати</button>
           <button @click="confirmReset" class="btn btn-danger">Скинути</button>
         </div>
       </div>
     </div>
 
-    <div v-if="showUploadModal" class="modal-overlay">
-      <div class="modal upload-modal" @click.stop>
+    <div v-if="showUploadModal" class="odx_modal-overlay">
+      <div class="odx_modal upload-odx_modal" @click.stop>
         <h3>Завантаження Excel файлу</h3>
         <div class="upload-progress">
           <div class="progress-bar">
@@ -202,7 +213,7 @@
             {{ uploadProgress }}% завершено
           </div>
         </div>
-        <div class="upload-stages">
+        <!-- <div class="upload-stages">
           <div class="stage" :class="{ 'stage-active': uploadProgress >= 20 }">
             <span class="stage-icon">📁</span>
             <span>Читання файлу</span>
@@ -219,7 +230,7 @@
             <span class="stage-icon">💾</span>
             <span>Застосування</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -242,10 +253,11 @@ const hasChanges = ref(false)
 const searchStore = ref('')
 const selectedTarget = ref('')
 const bulkValues = ref({})
-const showConfirmModal = ref(false)
+const showConfirmModal = ref(true)
 const fileInput = ref(null)
 const uploadProgress = ref(0)
 const showUploadModal = ref(false)
+const zaglushka = ref(null)
 
 const filteredObj = computed(() => {
   return Object.fromEntries(
@@ -272,6 +284,9 @@ const getStoreName = (storeId) => {
 
 const getInputStep = (targetKey) => {
   return targetKey === 'unprocessed' ? 1 : 0.1
+}
+const getZagStep = () => {
+  return 50
 }
 
 const filteredTargets = computed(() => {
@@ -310,7 +325,6 @@ const loadData = async () => {
     
     if (savedData) {
       targetsData.value = savedData
-      console.log('✓ Загружены сохраненные данные из localStorage')
     } else {
       const response = await fetch('/com/static/data/targets.json')
       if (!response.ok) {
@@ -321,7 +335,6 @@ const loadData = async () => {
       targetsData.value = defaultData
       
       saveData(defaultData)
-      console.log('✓ Загружены данные по умолчанию из targets.json')
     }
 
     originalData.value = JSON.parse(JSON.stringify(targetsData.value))
@@ -329,8 +342,8 @@ const loadData = async () => {
     initBulkValues()
     
   } catch (err) {
-    console.error('❌ Ошибка загрузки данных:', err)
-    error.value = err.message || 'Ошибка загрузки данных'
+    console.error('❌ Помилка:', err)
+    error.value = err.message || 'Помилка завантаження даних'
   } finally {
     loading.value = false
   }
@@ -349,10 +362,10 @@ const getSavedData = () => {
 const saveData = (data) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-    console.log('✓ Данные сохранены в localStorage')
+    console.log('✓ в localStorage')
     return true
   } catch (err) {
-    console.error('❌ Ошибка сохранения в localStorage:', err)
+    console.error('❌ Помилка в localStorage:', err)
     return false
   }
 }
@@ -388,8 +401,6 @@ const saveChanges = () => {
     hasChanges.value = false
     
     emitDataUpdate()
-    
-    console.log('✅ Изменения сохранены успешно')
   
     showNotification('Зміни збережено!', 'success')
   } else {
@@ -399,11 +410,12 @@ const saveChanges = () => {
 
 const emitDataUpdate = () => {
   const event = new CustomEvent('plansDataUpdated', {
-    detail: targetsData.value
+    detail: targetsData.value,
+    zaglushka: zaglushka.value
   })
   window.dispatchEvent(event)
   
-  console.log('📡 Отправлено событие обновления данных')
+  console.log('оновлення')
 }
 
 const resetToDefaults = () => {
@@ -428,13 +440,11 @@ const confirmReset = async () => {
     
     emitDataUpdate()
     
-    console.log('🔄 Данные сброшены к настройкам по умолчанию')
-    showNotification('Данные сброшены к настройкам по умолчанию', 'info')
+    showNotification('Дані оновлені за замовчуванням', 'info')
     
   } catch (err) {
-    console.error('❌ Ошибка сброса данных:', err)
-    error.value = 'Ошибка сброса данных'
-    showNotification('Ошибка сброса данных!', 'error')
+    console.error('', err)
+    showNotification('Помилка онавлення!', 'error')
   } finally {
     loading.value = false
   }
@@ -547,12 +557,12 @@ const parseExcelData = (workbook) => {
     }
   }
 
-  if (workbook.SheetNames.includes('Цели по магазинам')) {
-    const targetsSheet = workbook.Sheets['Цели по магазинам']
+  if (workbook.SheetNames.includes('Цілі')) {
+    const targetsSheet = workbook.Sheets['Цілі']
     const targetsData = XLSX.utils.sheet_to_json(targetsSheet, { header: 1 })
     
     if (targetsData.length < 2) {
-      throw new Error('Лист "Цели по магазинам" пуст или некорректный')
+      throw new Error('Лист "Цели" пустОЙ или некорректный')
     }
     
     const headers = targetsData[0]
@@ -846,7 +856,7 @@ onUnmounted(() => {
 }
 
 .btn {
-  padding: 8px 16px;
+  padding: 4px 10px;
   border: 1px solid transparent;
   border-radius: 6px;
   font-weight: 600;
@@ -991,7 +1001,7 @@ onUnmounted(() => {
 
 .target-card {
   min-width: 190px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #3b82f6;
   border-radius: 8px;
   padding: 16px;
   background: #f8fafc;
@@ -999,7 +1009,7 @@ onUnmounted(() => {
 }
 
 .target-card:hover {
-  border-color: #3b82f6;
+  border-color: #2a5fb4;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
 }
 
@@ -1265,7 +1275,7 @@ onUnmounted(() => {
   color: #f59e0b !important;
 }
 
-.modal-overlay {
+.odx_modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1279,7 +1289,7 @@ onUnmounted(() => {
   backdrop-filter: blur(4px);
 }
 
-.modal {
+.odx_modal {
   background: white;
   border-radius: 12px;
   padding: 24px;
@@ -1288,20 +1298,20 @@ onUnmounted(() => {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-.modal h3 {
+.odx_modal h3 {
   margin: 0 0 16px 0;
   color: #1e293b;
   font-size: 18px;
   font-weight: 600;
 }
 
-.modal p {
+.odx_modal p {
   margin: 0 0 20px 0;
   color: #64748b;
   line-height: 1.5;
 }
 
-.modal-actions {
+.odx_modal-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -1326,14 +1336,41 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
   }
 
-  .filters {
-    flex-direction: column;
-  }
-
+  
   .search-input, .target-filter {
     min-width: auto;
     width: 100%;
   }
+  .search-input, .target-filter {
+    min-width: auto;
+    width: 100%;
+    padding-left: 15px;
+  }
+}
+.filters {
+  flex-direction: column;
+  position: relative;
+}
+.target-filter {
+  min-width: auto;
+  width: 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 7px;
+}
+
+.search-input {
+  padding-left: 45px;
+}
+
+.inp_search {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: 35px;
+  width: 35px;
+  /* padding-left: 10px; */
 }
 
 @keyframes slideInRight {
@@ -1349,7 +1386,7 @@ onUnmounted(() => {
 
 /* ==== EXCEL UPLOAD STYLES ==== */
 
-.upload-modal {
+.upload-odx_modal {
   max-width: 500px;
   min-height: 300px;
 }
@@ -1451,7 +1488,7 @@ onUnmounted(() => {
 
 /* Адаптивность для мобильных */
 @media (max-width: 480px) {
-  .upload-modal {
+  .upload-odx_modal {
     max-width: 95%;
     margin: 20px;
   }
@@ -1467,5 +1504,10 @@ onUnmounted(() => {
   .stage span:last-child {
     font-size: 14px;
   }
+
+}
+.header_title {
+  display: flex;
+  gap: 8px;
 }
 </style>
