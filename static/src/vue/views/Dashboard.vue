@@ -69,9 +69,6 @@
       </div>
     </div>
 
-    {{ 'asdasdasd' + zaglushka }}
-    {{ 'asdasdasd' + newZaglushka }}
-
     <div v-if="error" class="odx-error">
       <div class="odx-error__icon">⚠️</div>
       <div class="odx-error__message">{{ error }}</div>
@@ -445,7 +442,7 @@ const selectedColor = ref('#e3f2fd')
 const isPaletteOpen = ref(false)
 
 const selectedPeriod = ref('Місяць')
-const zaglushka = ref(300)
+const zaglushka = ref(200)
 
 const loadData = async () => {
   try {
@@ -546,10 +543,8 @@ const saveTargetsToMemory = (data) => {
 
 const handlePlansDataUpdate = (event) => {
   const newTargetsData = event.detail
-  const newZaglushka = event.zaglushka
 
   targetsData.value = newTargetsData
-  zaglushka.value = newZaglushka
   dynamicTargetsData.value = newTargetsData
 
   saveTargetsToMemory(newTargetsData)

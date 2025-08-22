@@ -159,7 +159,6 @@
           
           <div class="action-group">
             <h4>Загальні:</h4>
-            {{ zaglushka }}
             <div class="stats">
               <div class="stat-item">
                 <span class="stat-label">% заглушка:</span>
@@ -411,7 +410,6 @@ const saveChanges = () => {
 const emitDataUpdate = () => {
   const event = new CustomEvent('plansDataUpdated', {
     detail: targetsData.value,
-    zaglushka: zaglushka.value
   })
   window.dispatchEvent(event)
   
