@@ -442,6 +442,10 @@ const selectedColor = ref('#e3f2fd')
 const isPaletteOpen = ref(false)
 
 const selectedPeriod = ref('Місяць')
+<<<<<<< HEAD
+=======
+const zaglushka = ref(200)
+>>>>>>> 49beb673c39604e49ebac850a0499a6756847656
 
 const loadData = async () => {
   try {
@@ -1213,7 +1217,7 @@ const calculateWeeklyMetrics = (weekId, allStores) => {
 
       if (target > 0) {
         if (targetConfig.type === 'negative') {
-          achievementPercent = Math.min((target / actualValue) * 100, 200)
+          achievementPercent = Math.min((target / actualValue) * 100, zaglushka.value || 200)
         } else {
           achievementPercent = (actualValue / target) * 100
         }

@@ -6,7 +6,6 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -51,6 +50,7 @@ static/npm-debug.log*
 static/yarn-debug.log*
 static/yarn-error.log*
 static/package-lock.json
+static/package.json
 static/yarn.lock
 
 static/pids

@@ -32,5 +32,6 @@
             parent="menu_vue_main"
             action="action_vue_plans" 
             sequence="20"/>
+            
     </data>
 </odoo>
