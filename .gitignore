@@ -3,6 +3,7 @@ __pycache__/
 *$py.class
 *.so
 
+plans.py
 .Python
 build/
 develop-eggs/
